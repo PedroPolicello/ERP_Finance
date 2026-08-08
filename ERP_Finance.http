@@ -1,0 +1,36 @@
+@ERP_Finance_HostAddress = http://localhost:5262
+
+//Create
+POST {{ERP_Finance_HostAddress}}/api/product
+Content-Type: application/json
+{
+  "name": "Coca-Cola",
+  "description": "Coca-Cola é uma bebida carbonada fabricada pela The Coca-Cola Company.",
+  "priceByUnit": 5.50,
+  "category": 4,
+  "stockQuantity": 100
+}
+
+###
+
+//GetAll
+GET {{ERP_Finance_HostAddress}}/api/product
+
+###
+
+//GetById
+GET {{ERP_Finance_HostAddress}}/api/product/1
+
+###
+
+//Update
+PATCH {{ERP_Finance_HostAddress}}/api/product/1
+Content-Type: application/json
+{
+  "priceByUnit": 12.00
+}
+
+###
+
+//Delete
+DELETE {{ERP_Finance_HostAddress}}/api/product/1
