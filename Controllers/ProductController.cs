@@ -1,4 +1,5 @@
 ﻿using ERP_Finance.DTOs.Product;
+using ERP_Finance.Models;
 using ERP_Finance.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,19 +21,13 @@ public class ProductController : ControllerBase
     {
         var products = _productService.GetAllProductsService();
 
-        if (products == null)
-            return NotFound();
-
         return Ok(products);
     }
 
-    [HttpGet("{id}")]
-    public ActionResult GetProduct(Guid id)
+    [HttpGet("{id:guid}")]
+    public ActionResult<Product> GetProduct(Guid id)
     {
         var product = _productService.GetProductService(id);
-
-        if (product == null)
-            return NotFound();
 
         return Ok(product);
     }
@@ -40,15 +35,18 @@ public class ProductController : ControllerBase
     [HttpPost]
     public ActionResult AddProduct([FromBody] CreateProductDTO productDTO)
     {
-        var created = _productService.AddProductService(productDTO);
+        var result = _productService.AddProductService(productDTO);
 
-        if(!created)
-            return BadRequest();
+        if (!result.WasCreated)
+            return Ok(result.Product);
 
-        return Created();
+        return CreatedAtAction(
+            nameof(GetProduct),
+            new { id = result.Product.Id },
+            result.Product);
     }
 
-    [HttpPatch("{id}")]
+    [HttpPatch("{id:guid}")]
     public ActionResult UpdateProduct(Guid id, [FromBody] UpdateProductDTO productDTO)
     {
         var updated = _productService.UpdateProductService(id, productDTO);
@@ -59,14 +57,11 @@ public class ProductController : ControllerBase
         return Ok();
     }
 
-    [HttpDelete("{id}")]
-    public ActionResult DeleteProduct(Guid id) 
-    { 
-        var deleted = _productService.DeleteProductService(id);
+    [HttpDelete("{id:guid}")]
+    public IActionResult DeleteProduct(Guid id)
+    {
+        _productService.DeleteProductService(id);
 
-        if(!deleted)
-            return BadRequest();
-
-        return Ok();
+        return NoContent();
     }
 }
