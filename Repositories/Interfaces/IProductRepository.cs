@@ -8,5 +8,6 @@ public interface IProductRepository
     bool UpdateInRepository(Product product);
     bool RemoveFromRepository(Product product);
     IReadOnlyList<Product> AllProducts { get; }
-    Product? GetProductById(int id);
+    Product? GetProductById(Guid id);
+    Product? GetProductBySKU(string sku);
 }

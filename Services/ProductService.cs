@@ -6,26 +6,62 @@ namespace ERP_Finance.Service;
 
 public class ProductService
 {
-    private IProductRepository _productRepository;
+    private readonly IProductRepository _productRepository;
 
     public ProductService(IProductRepository productRepository)
     {
         _productRepository = productRepository;
     }
 
-    public bool AddProductService(CreateProductDTO productDTO)
+    public AddProductResult AddProductService(CreateProductDTO productDTO)
     {
         if (productDTO == null)
             throw new ArgumentNullException(nameof(productDTO));
 
-        var stockInfo = new ProductStockInfo(productDTO.StockQuantity);
+        var stockInfo = new ProductInventory(productDTO.StockQuantity);
 
-        var product = new Product(GenerateId(), productDTO.Name, productDTO.Description, productDTO.PriceByUnit, productDTO.Category, stockInfo, DateTime.UtcNow);
+        var productDetails = new ProductDetails(
+            productDTO.BrandName,
+            productDTO.WeightOrVolume,
+            productDTO.MeasureType);
 
-        return _productRepository.AddToRepository(product);
+        var newProduct = new Product(
+            productDTO.SKU,
+            productDTO.Name,
+            productDTO.Description,
+            productDTO.Price,
+            productDTO.Category,
+            productDetails,
+            stockInfo,
+            DateTime.UtcNow);
+
+        var existingProduct = _productRepository.GetProductBySKU(productDTO.SKU);
+        if (existingProduct is not null)
+        {
+            if (!existingProduct.HasSameInfo(newProduct))
+                throw new InvalidOperationException("A product with the same SKU and different information already exists.");
+
+            existingProduct.Inventory.SetStockQuantity(existingProduct.Inventory.StockQuantity + productDTO.StockQuantity);
+
+            existingProduct.Touch();
+
+            var updated = _productRepository.UpdateInRepository(existingProduct);
+
+            if (!updated)
+                throw new InvalidOperationException("The existing product could not be updated.");
+
+            return new AddProductResult(existingProduct, WasCreated: false);
+        }
+
+        var created = _productRepository.AddToRepository(newProduct);
+
+        if (!created)
+            throw new InvalidOperationException("The product could not be created.");
+
+        return new AddProductResult(newProduct, WasCreated: true);
     }
 
-    public bool UpdateProductService(int id, UpdateProductDTO productDTO)
+    public bool UpdateProductService(Guid id, UpdateProductDTO productDTO)
     {
 
         if (productDTO == null)
@@ -38,9 +74,10 @@ public class ProductService
 
         var name = product.Name;
         var description = product.Description;
-        var price = product.PriceByUnit;
+        var price = product.Price;
         var category = product.Category;
-        var stockInfo = product.StockInfo;
+        var productDetails = product.Details;
+        var stockInfo = product.Inventory;
 
         if (productDTO.Name is not null)
             name = productDTO.Name.Trim();
@@ -48,44 +85,55 @@ public class ProductService
         if (productDTO.Description is not null)
             description = productDTO.Description.Trim();
 
-        if (productDTO.PriceByUnit.HasValue)
-            price = productDTO.PriceByUnit.Value;
+        if (productDTO.Price.HasValue)
+            price = productDTO.Price.Value;
 
         if (productDTO.Category.HasValue)
             category = productDTO.Category.Value;
+
+        var brandName = product.Details.BrandName;
+        var weightOrVolume = product.Details.WeightOrVolume;
+        var measureType = product.Details.MeasureType;
+
+        if (productDTO.BrandName is not null)
+            brandName = productDTO.BrandName.Trim();
+
+        if (productDTO.WeightOrVolume.HasValue)
+            weightOrVolume = productDTO.WeightOrVolume.Value;
+
+        if (productDTO.MeasureType.HasValue)
+            measureType = productDTO.MeasureType.Value;
+
+        productDetails.UpdateDetails(brandName, weightOrVolume, measureType);
 
         if (productDTO.StockQuantity.HasValue)
             stockInfo.SetStockQuantity(productDTO.StockQuantity.Value);
 
 
-        product.Update(name, description, price, category, stockInfo, DateTime.UtcNow);
+        product.Update(name, description, price, category, productDetails, stockInfo, DateTime.UtcNow);
 
         return _productRepository.UpdateInRepository(product);
     }
 
-    public bool DeleteProductService(int id)
+    public bool DeleteProductService(Guid id)
     {
         var product = _productRepository.GetProductById(id);
 
         if (product == null)
-            throw new Exception("Product not found.");
+            throw new KeyNotFoundException("Product not found.");
 
         return _productRepository.RemoveFromRepository(product);
     }
 
-    public Product? GetProductService(int id) => _productRepository.GetProductById(id);
-
-    public IReadOnlyList<Product> GetAllProductsService() => _productRepository.AllProducts;
-
-    private int GenerateId()
+    public Product GetProductService(Guid id)
     {
-        if (_productRepository.AllProducts.Count == 0)
-        {
-            return 1;
-        }
+        var product = _productRepository.GetProductById(id);
 
-        return _productRepository.AllProducts.Max(
-            product => product.Id) + 1;
+        if (product == null)
+            throw new KeyNotFoundException("Product not found.");
+
+        return product;
     }
 
+    public IReadOnlyList<Product> GetAllProductsService() => _productRepository.AllProducts;
 }

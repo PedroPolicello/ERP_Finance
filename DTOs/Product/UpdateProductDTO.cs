@@ -10,16 +10,28 @@ public class UpdateProductDTO
     public string? Name { get; set; }
 
 
-    [StringLength(200, MinimumLength = 1)]
+    [StringLength(300, MinimumLength = 1)]
     public string? Description { get; set; }
 
 
     [Range(0.01, double.MaxValue)]
-    public decimal? PriceByUnit { get; set; }
+    public decimal? Price { get; set; }
 
 
     [EnumDataType(typeof(ProductCategory))]
     public ProductCategory? Category { get; set; }
+
+
+    [StringLength(100, MinimumLength = 1)]
+    public string? BrandName { get; set; }
+
+
+    [Range(0.01, double.MaxValue)]
+    public decimal? WeightOrVolume { get; set; }
+
+
+    [EnumDataType(typeof(MeasureType))]
+    public MeasureType? MeasureType { get; set; }
 
 
     [Range(0, int.MaxValue)]

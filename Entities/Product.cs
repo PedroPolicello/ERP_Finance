@@ -1,53 +1,97 @@
-﻿using ERP_Finance.Types;
+﻿using ERP_Finance.Helpers;
+using ERP_Finance.Types;
 
 namespace ERP_Finance.Models;
 
 public class Product
 {
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
+    public string SKU { get; private set; }
     public string Name { get; private set; }
     public string Description { get; private set; }
-    public decimal PriceByUnit { get; private set; }
+    public decimal Price { get; private set; }
     public ProductCategory Category { get; private set; }
-    //public Image ProductImage { get; private set; } //Adicionar
-    public ProductStockInfo StockInfo { get; private set; }
+    public string? ImageUrl { get; private set; }
+    public ProductDetails Details { get; private set; }
+    public ProductInventory Inventory { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime LastUpdateAt { get; private set; }
 
+    private Product()
+    { }
 
-    public Product(int id, string name, string description, decimal priceByUnit, ProductCategory category, ProductStockInfo stockInfo, DateTime createdAt)
+    public Product(string sku, string name, string description, decimal price, ProductCategory category, ProductDetails details, ProductInventory inventory, DateTime createdAt)
     {
+        ValidateSKU(sku);
         ValidateName(name);
         ValidateDescription(description);
-        ValidatePrice(priceByUnit);
+        ValidatePrice(price);
         ValidateCategory(category);
-        ValidateStockInfo(stockInfo);
+        ValidateDetails(details);
+        ValidateInventory(inventory);
 
-
-        Id = id;
+        Id = Guid.NewGuid();
+        SKU = sku.Trim().ToUpperInvariant();
         Name = name.Trim();
         Description = description.Trim();
-        PriceByUnit = priceByUnit;
+        Price = price;
         Category = category;
-        StockInfo = stockInfo;
+        Details = details;
+        Inventory = inventory;
         CreatedAt = createdAt;
         LastUpdateAt = createdAt;
+
+        //SKU = SKUGenerator.GenerateSKU(Name, Details); // SKU é criado pelo usuario
     }
 
-    public void Update(string name, string description, decimal priceByUnit, ProductCategory category, ProductStockInfo stockInfo, DateTime lastUpdateAt)
+    public void Update(string name, string description, decimal priceByUnit, ProductCategory category, ProductDetails details, ProductInventory inventory, DateTime lastUpdateAt)
     {
         ValidateName(name);
         ValidateDescription(description);
         ValidatePrice(priceByUnit);
         ValidateCategory(category);
-        ValidateStockInfo(stockInfo);
+        ValidateDetails(details);
+        ValidateInventory(inventory);
 
         Name = name.Trim();
         Description = description.Trim();
-        PriceByUnit = priceByUnit;
+        Price = priceByUnit;
         Category = category;
-        StockInfo = stockInfo;
+        Details = details;
+        Inventory = inventory;
         LastUpdateAt = lastUpdateAt;
+
+        //SKU = SKUGenerator.GenerateSKU(Name, Details); // SKU é criado pelo usuario
+    }
+
+    public void Touch()
+    {
+        LastUpdateAt = DateTime.UtcNow;
+    }
+
+    public bool HasSameInfo(Product other)
+    {
+        ArgumentNullException.ThrowIfNull(other);
+
+        return SKU.Equals(other.SKU, StringComparison.OrdinalIgnoreCase)
+            && Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase)
+            && Description.Equals(other.Description, StringComparison.Ordinal)
+            && Price == other.Price
+            && Category == other.Category
+
+            && Details.BrandName.Equals(other.Details.BrandName, StringComparison.OrdinalIgnoreCase)
+            && Details.WeightOrVolume == other.Details.WeightOrVolume
+            && Details.MeasureType == other.Details.MeasureType;
+    }
+
+
+    private static void ValidateSKU(string sku)
+    {
+        if (string.IsNullOrWhiteSpace(sku))
+            throw new ArgumentException("SKU cannot be null or empty.", nameof(sku));
+
+        if (sku.Length < 3 || sku.Length > 50)
+            throw new ArgumentException("SKU must be between 3 and 50 characters.", nameof(sku));
     }
 
     private static void ValidateName(string name)
@@ -74,25 +118,33 @@ public class Product
             throw new ArgumentException("Invalid product category.", nameof(category));
     }
 
-    private static void ValidateStockInfo(ProductStockInfo stockInfo)
+    private static void ValidateDetails(ProductDetails details)
     {
-        if (stockInfo == null)
-            throw new ArgumentNullException(nameof(stockInfo), "Stock information cannot be null.");
+        if (details == null)
+            throw new ArgumentNullException(nameof(details), "Product details cannot be null.");
 
-        if (stockInfo.StockQuantity < 0)
-            throw new ArgumentOutOfRangeException(nameof(stockInfo.StockQuantity), "Stock quantity cannot be negative.");
+        details.ValidateInfo(details.BrandName, details.WeightOrVolume, details.MeasureType);
+    }
+
+    private static void ValidateInventory(ProductInventory inventory)
+    {
+        if (inventory == null)
+            throw new ArgumentNullException(nameof(inventory), "Stock information cannot be null.");
+
+        if (inventory.StockQuantity < 0)
+            throw new ArgumentOutOfRangeException(nameof(inventory.StockQuantity), "Stock quantity cannot be negative.");
     }
 
 }
 
 
-public class ProductStockInfo
+public class ProductInventory
 {
     public int StockQuantity { get; private set; }
 
     public bool IsInStock => StockQuantity > 0;
 
-    public ProductStockInfo(int stockQuantity)
+    public ProductInventory(int stockQuantity)
     {
         SetStockQuantity(stockQuantity);
     }
@@ -104,4 +156,52 @@ public class ProductStockInfo
 
         StockQuantity = quantity;
     }
+}
+
+
+public class ProductDetails
+{
+    public string BrandName { get; private set; } = string.Empty;
+    public decimal WeightOrVolume { get; private set; }
+    public MeasureType MeasureType { get; private set; }
+
+    public ProductDetails(string brandName, decimal weightOrVolume, MeasureType measureType)
+    {
+        UpdateDetails(brandName, weightOrVolume, measureType);
+    }
+
+    public void UpdateDetails(string brandName, decimal weightOrVolume, MeasureType measureType)
+    {
+        ValidateInfo(brandName, weightOrVolume, measureType);
+
+        BrandName = brandName;
+        WeightOrVolume = weightOrVolume;
+        MeasureType = measureType;
+    }
+
+    public void ValidateInfo(string brandName, decimal weightOrVolume, MeasureType measureType)
+    {
+        ValidateBrandName(brandName);
+        ValidateWeight(weightOrVolume);
+        ValidateMeasureType(measureType);
+    }
+
+    private static void ValidateBrandName(string brandName)
+    {
+        if (string.IsNullOrWhiteSpace(brandName))
+            throw new ArgumentException("Brand name cannot be null or empty.", nameof(brandName));
+    }
+
+    private static void ValidateWeight(decimal weightOrVolume)
+    {
+        if (weightOrVolume <= 0)
+            throw new ArgumentOutOfRangeException(nameof(weightOrVolume), "WeightOrVolume must be greater than zero.");
+    }
+
+    private static void ValidateMeasureType(MeasureType mesureType)
+    {
+        if (!Enum.IsDefined(typeof(MeasureType), mesureType))
+            throw new ArgumentException("Invalid measure type.", nameof(mesureType));
+    }
+
 }

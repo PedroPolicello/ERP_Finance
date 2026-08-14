@@ -27,7 +27,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult GetProduct(int id)
+    public ActionResult GetProduct(Guid id)
     {
         var product = _productService.GetProductService(id);
 
@@ -49,7 +49,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPatch("{id}")]
-    public ActionResult UpdateProduct(int id, [FromBody] UpdateProductDTO productDTO)
+    public ActionResult UpdateProduct(Guid id, [FromBody] UpdateProductDTO productDTO)
     {
         var updated = _productService.UpdateProductService(id, productDTO);
 
@@ -60,7 +60,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public ActionResult DeleteProduct(int id) 
+    public ActionResult DeleteProduct(Guid id) 
     { 
         var deleted = _productService.DeleteProductService(id);
 
