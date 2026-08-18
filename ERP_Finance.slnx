@@ -1,3 +1,4 @@
 <Solution>
-  <Project Path="ERP_Finance.csproj" />
+  <Project Path="ERP_Finance\ERP_Finance.csproj" />
+  <Project Path="ERP_Finance.Tests\ERP_Finance.Tests.csproj" />
 </Solution>
