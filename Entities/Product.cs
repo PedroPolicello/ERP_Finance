@@ -134,7 +134,6 @@ public class Product
         if (inventory.StockQuantity < 0)
             throw new ArgumentOutOfRangeException(nameof(inventory.StockQuantity), "Stock quantity cannot be negative.");
     }
-
 }
 
 

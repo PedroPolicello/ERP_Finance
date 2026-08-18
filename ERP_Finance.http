@@ -4,11 +4,15 @@
 POST {{ERP_Finance_HostAddress}}/api/product
 Content-Type: application/json
 {
+  "sku": "COCA-COLA-1000ML",
   "name": "Coca-Cola",
-  "description": "Coca-Cola é uma bebida carbonada fabricada pela The Coca-Cola Company.",
-  "priceByUnit": 5.50,
+  "description": "Refrigerante de cola",
+  "price": 12.00,
   "category": 4,
-  "stockQuantity": 100
+  "brandName": "Coca-Cola",
+  "weightOrVolume": 1,
+  "measureType": 3,
+  "stockQuantity": -10
 }
 
 ###
@@ -19,18 +23,23 @@ GET {{ERP_Finance_HostAddress}}/api/product
 ###
 
 //GetById
-GET {{ERP_Finance_HostAddress}}/api/product/1
+GET {{ERP_Finance_HostAddress}}/api/product/00000000-0000-0000-0000-000000000000
 
 ###
 
 //Update
-PATCH {{ERP_Finance_HostAddress}}/api/product/1
+PATCH {{ERP_Finance_HostAddress}}/api/product/68f69df0-441a-46a5-8f06-ad7ff122a853
 Content-Type: application/json
 {
-  "priceByUnit": 12.00
+  "price": 10.00
 }
 
 ###
 
 //Delete
-DELETE {{ERP_Finance_HostAddress}}/api/product/1
+DELETE {{ERP_Finance_HostAddress}}/api/product/68f69df0-441a-46a5-8f06-ad7ff122a853
+
+###
+
+//HealthCheck
+GET {{ERP_Finance_HostAddress}}/health
