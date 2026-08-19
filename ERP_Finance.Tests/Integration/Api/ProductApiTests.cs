@@ -1,11 +1,11 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-
 using ERP_Finance.DTOs.Product;
+using ERP_Finance.Tests.Integration.Infrastructure;
 using ERP_Finance.Types;
 
-namespace ERP_Finance.Tests.Integration;
+namespace ERP_Finance.Tests.Integration.Api;
 
 public class ProductApiTests
     : IClassFixture<CustomWebApplicationFactory>

@@ -1,6 +1,7 @@
-﻿using System.Net;
+﻿using ERP_Finance.Tests.Integration.Infrastructure;
+using System.Net;
 
-namespace ERP_Finance.Tests.Integration;
+namespace ERP_Finance.Tests.Integration.Api;
 
 public class HealthApiTests : IClassFixture<CustomWebApplicationFactory>
 {

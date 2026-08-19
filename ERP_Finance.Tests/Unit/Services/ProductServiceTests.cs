@@ -3,7 +3,7 @@ using ERP_Finance.Models;
 using ERP_Finance.Service;
 using ERP_Finance.Types;
 
-namespace ERP_Finance.Tests;
+namespace ERP_Finance.Tests.Unit.Services;
 
 public class ProductServiceTests
 {

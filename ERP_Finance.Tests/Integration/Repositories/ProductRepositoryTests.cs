@@ -6,7 +6,7 @@ using ERP_Finance.Types;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace ERP_Finance.Tests.Repositories;
+namespace ERP_Finance.Tests.Integration.Repositories;
 
 public class ProductRepositoryTests
     : IDisposable
