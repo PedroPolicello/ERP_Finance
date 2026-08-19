@@ -1,7 +1,7 @@
 ﻿using ERP_Finance.Models;
 using ERP_Finance.Types;
 
-namespace ERP_Finance.Tests;
+namespace ERP_Finance.Tests.Unit.Models;
 
 public class ProductTests
 {

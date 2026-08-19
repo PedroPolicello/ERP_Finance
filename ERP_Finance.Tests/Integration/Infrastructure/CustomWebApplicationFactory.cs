@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace ERP_Finance.Tests.Integration;
+namespace ERP_Finance.Tests.Integration.Infrastructure;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
