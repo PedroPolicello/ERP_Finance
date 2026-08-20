@@ -45,13 +45,5 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
                     .HasColumnName("MeasureType")
                     .IsRequired();
             });
-
-        builder.OwnsOne(product => product.Inventory,
-            inventory =>
-            {
-                inventory.Property(item => item.StockQuantity)
-                    .HasColumnName("StockQuantity")
-                    .IsRequired();
-            });
     }
 }

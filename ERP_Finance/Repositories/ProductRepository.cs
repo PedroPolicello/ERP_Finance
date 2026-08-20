@@ -40,7 +40,6 @@ public class ProductRepository : Interfaces.IProductRepository
             product.Price,
             product.Category,
             product.Details,
-            product.Inventory,
             product.LastUpdateAt);
 
         _context.SaveChanges();

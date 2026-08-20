@@ -9,36 +9,20 @@ public class ProductTests
     public void CreateProduct_WithValidData_ShouldCreateProduct()
     {
         // Arrange & Act
-        var product = MockProduct(productName: "Test Product", sku: "SKU123", stockQuantity: 100);
+        var product = MockProduct(productName: "Test Product", sku: "SKU123");
 
         // Assert
         Assert.NotNull(product);
         Assert.Equal("SKU123", product.SKU);
         Assert.Equal("Test Product", product.Name);
-        Assert.Equal(100, product.Inventory.StockQuantity);
     }
 
-    [Fact]
-    public void CreateInventory_WithNegativeStock_ShouldThrowException()
-    {
-        // Arrange
-        var negativeStock = -1;
-
-        // Act
-        var action = () => new ProductInventory(negativeStock);
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(action);
-
-        // Assert
-        Assert.Equal(
-            "Stock quantity cannot be negative. (Parameter 'quantity')",
-            exception.Message);
-    }
 
     [Fact]
     public void CreateProduct_WithEmptySku_ShouldThrowException()
     {
         // Arrange
-        var action = () => MockProduct(productName: "Test Product", sku: string.Empty, stockQuantity: 100);
+        var action = () => MockProduct(productName: "Test Product", sku: string.Empty);
 
         // Act
         var exception = Assert.Throws<ArgumentException>(action);
@@ -55,7 +39,7 @@ public class ProductTests
     public void CreateProduct_WithInvalidSkuLength_ShouldThrowException(string sku)
     {
         // Arrange
-        var action = () => MockProduct(productName: "Test Product", sku: sku, stockQuantity: 100);
+        var action = () => MockProduct(productName: "Test Product", sku: sku);
 
         // Act
         var exception = Assert.Throws<ArgumentException>(action);
@@ -68,8 +52,8 @@ public class ProductTests
     public void Products_WithSameInformation_ShouldReturnTrue()
     {
         // Arrange
-        var product1 = MockProduct(productName: "Test Product", sku: "SKU123", stockQuantity: 100);
-        var product2 = MockProduct(productName: "Test Product", sku: "SKU123", stockQuantity: 100);
+        var product1 = MockProduct(productName: "Test Product", sku: "SKU123");
+        var product2 = MockProduct(productName: "Test Product", sku: "SKU123");
 
         // Act
         var result = product1.HasSameInfo(product2);
@@ -82,8 +66,8 @@ public class ProductTests
     public void Products_WithDifferentInformation_ShouldReturnFalse()
     {
         // Arrange
-        var product1 = MockProduct(productName: "Test Product", sku: "SKU123", stockQuantity: 100);
-        var product2 = MockProduct(productName: "Different Product", sku: "SKU123", stockQuantity: 100);
+        var product1 = MockProduct(productName: "Test Product", sku: "SKU123");
+        var product2 = MockProduct(productName: "Different Product", sku: "SKU123");
 
         // Act
         var result = product1.HasSameInfo(product2);
@@ -96,7 +80,7 @@ public class ProductTests
     public void Touch_ShouldUpdateLastUpdateAt()
     {
         // Arrange
-        var product = MockProduct(productName: "Test Product", sku: "SKU123", stockQuantity: 100);
+        var product = MockProduct(productName: "Test Product", sku: "SKU123");
 
         var originalLastUpdateAt = product.LastUpdateAt;
 
@@ -109,14 +93,13 @@ public class ProductTests
         Assert.True(product.LastUpdateAt > originalLastUpdateAt);
     }
 
-    private Product MockProduct(string productName, string sku, int stockQuantity)
+    private Product MockProduct(string productName, string sku)
     {
         var productDetails = new ProductDetails(
             "Test Brand",
             1.5m,
             MeasureType.Kilogram);
 
-        var productInventory = new ProductInventory(stockQuantity);
 
         return new Product(
             sku: sku,
@@ -125,7 +108,6 @@ public class ProductTests
             price: 99.99m,
             category: ProductCategory.Salgados,
             details: productDetails,
-            inventory: productInventory,
             createdAt: DateTime.UtcNow);
     }
 

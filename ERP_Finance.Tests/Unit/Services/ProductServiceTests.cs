@@ -17,44 +17,13 @@ public class ProductServiceTests
         var productDto = CreateProductDto();
 
         // Act
-        var result = productService.AddProductService(productDto);
+        var result = productService.CreateProductService(productDto);
 
         // Assert
         Assert.NotNull(result);
         Assert.True(result.WasCreated);
         Assert.Equal("SKU123", result.Product.SKU);
         Assert.Single(fakeRepository.AllProducts);
-    }
-
-    [Fact]
-    public void AddProduct_WithExistingSkuAndSameInformation_ShouldAddStock()
-    {
-        // Arrange
-        var fakeRepository = new Fakes.FakeProductRepository();
-        var productService = new ProductService(fakeRepository);
-
-        var firstDto = CreateProductDto(stockQuantity: 100);
-        var secondDto = CreateProductDto(stockQuantity: 50);
-
-        // Act
-        var firstResult =
-            productService.AddProductService(firstDto);
-
-        var originalLastUpdateAt =
-            firstResult.Product.LastUpdateAt;
-
-        Thread.Sleep(10);
-
-        var result =
-            productService.AddProductService(secondDto);
-
-        // Assert
-        Assert.False(result.WasCreated);
-        Assert.Single(fakeRepository.AllProducts);
-        Assert.Equal(150, result.Product.Inventory.StockQuantity);
-        Assert.True(
-            result.Product.LastUpdateAt >
-            originalLastUpdateAt);
     }
 
     [Fact]
@@ -70,11 +39,11 @@ public class ProductServiceTests
             name: "Another Product");
 
         // Act
-        productService.AddProductService(firstDto);
+        productService.CreateProductService(firstDto);
 
         var exception = Assert.Throws<InvalidOperationException>(() =>
         {
-            productService.AddProductService(secondDto);
+            productService.CreateProductService(secondDto);
         });
 
         // Assert
@@ -92,7 +61,7 @@ public class ProductServiceTests
         var productService = new ProductService(fakeRepository);
 
         var addResult =
-            productService.AddProductService(
+            productService.CreateProductService(
                 CreateProductDto());
 
         var productId = addResult.Product.Id;
@@ -135,7 +104,7 @@ public class ProductServiceTests
         var productService = new ProductService(fakeRepository);
 
         var addResult =
-            productService.AddProductService(
+            productService.CreateProductService(
                 CreateProductDto());
 
         var productId = addResult.Product.Id;
@@ -149,7 +118,6 @@ public class ProductServiceTests
             BrandName = "Updated Brand",
             WeightOrVolume = 2.0m,
             MeasureType = MeasureType.Liter,
-            StockQuantity = 150
         };
 
         // Act
@@ -175,10 +143,6 @@ public class ProductServiceTests
         Assert.Equal(
             79.99m,
             updatedProduct.Price);
-
-        Assert.Equal(
-            150,
-            updatedProduct.Inventory.StockQuantity);
     }
 
     [Fact]
@@ -217,7 +181,7 @@ public class ProductServiceTests
         var productService = new ProductService(fakeRepository);
 
         var addResult =
-            productService.AddProductService(
+            productService.CreateProductService(
                 CreateProductDto());
 
         var productId = addResult.Product.Id;
@@ -270,7 +234,6 @@ public class ProductServiceTests
             BrandName = "Test Brand",
             WeightOrVolume = 1.5m,
             MeasureType = MeasureType.Kilogram,
-            StockQuantity = stockQuantity
         };
     }
 }

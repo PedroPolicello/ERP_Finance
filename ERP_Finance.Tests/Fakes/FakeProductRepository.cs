@@ -56,7 +56,6 @@ public class FakeProductRepository : IProductRepository
             product.Price,
             product.Category,
             product.Details,
-            product.Inventory,
             product.LastUpdateAt);
 
         return true;

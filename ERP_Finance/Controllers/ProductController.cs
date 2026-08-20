@@ -33,9 +33,9 @@ public class ProductController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult AddProduct([FromBody] CreateProductDTO productDTO)
+    public ActionResult CreateProduct([FromBody] CreateProductDTO productDTO)
     {
-        var result = _productService.AddProductService(productDTO);
+        var result = _productService.CreateProductService(productDTO);
 
         if (!result.WasCreated)
             return Ok(result.Product);

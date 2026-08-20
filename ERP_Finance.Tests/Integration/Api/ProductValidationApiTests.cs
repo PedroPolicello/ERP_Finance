@@ -53,25 +53,6 @@ public class ProductValidationApiTests : IClassFixture<CustomWebApplicationFacto
             response.StatusCode);
     }
 
-    [Fact]
-    public async Task PostProduct_WithNegativeStock_ShouldReturnBadRequest()
-    {
-        // Arrange
-        var productDto = CreateProductDto();
-
-        productDto.StockQuantity = -1;
-
-        // Act
-        var response = await _client.PostAsJsonAsync(
-            "/api/Product",
-            productDto);
-
-        // Assert
-        Assert.Equal(
-            HttpStatusCode.BadRequest,
-            response.StatusCode);
-    }
-
     private static CreateProductDTO CreateProductDto()
     {
         return new CreateProductDTO
@@ -84,7 +65,6 @@ public class ProductValidationApiTests : IClassFixture<CustomWebApplicationFacto
             BrandName = "Test Brand",
             WeightOrVolume = 1.5m,
             MeasureType = MeasureType.Kilogram,
-            StockQuantity = 100
         };
     }
 }

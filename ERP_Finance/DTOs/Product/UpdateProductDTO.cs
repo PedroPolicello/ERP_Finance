@@ -33,8 +33,4 @@ public class UpdateProductDTO
     [EnumDataType(typeof(MeasureType))]
     public MeasureType? MeasureType { get; set; }
 
-
-    [Range(0, int.MaxValue)]
-    public int? StockQuantity { get; set; }
-
 }

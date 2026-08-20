@@ -122,7 +122,6 @@ public class ProductApiTests
             BrandName = "Updated Brand",
             WeightOrVolume = 2.0m,
             MeasureType = MeasureType.Liter,
-            StockQuantity = 150
         };
 
         // Act
@@ -255,7 +254,6 @@ public class ProductApiTests
             BrandName = "Test Brand",
             WeightOrVolume = 1.5m,
             MeasureType = MeasureType.Kilogram,
-            StockQuantity = 100
         };
     }
 }

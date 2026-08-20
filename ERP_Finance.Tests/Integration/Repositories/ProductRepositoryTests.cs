@@ -142,7 +142,6 @@ public class ProductRepositoryTests
             75.50m,
             ProductCategory.Doces,
             product.Details,
-            product.Inventory,
             DateTime.UtcNow);
 
         // Act
@@ -226,7 +225,6 @@ public class ProductRepositoryTests
             1.5m,
             MeasureType.Kilogram);
 
-        var inventory = new ProductInventory(100);
 
         return new Product(
             sku: $"SKU-{Guid.NewGuid():N}".ToUpperInvariant(),
@@ -235,7 +233,6 @@ public class ProductRepositoryTests
             price: 99.99m,
             category: ProductCategory.Salgados,
             details: details,
-            inventory: inventory,
             createdAt: DateTime.UtcNow);
     }
 

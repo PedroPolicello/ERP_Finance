@@ -32,7 +32,6 @@ public class ProductListApiTests
             BrandName = "Test Brand",
             WeightOrVolume = 1.0m,
             MeasureType = MeasureType.Kilogram,
-            StockQuantity = 10
         };
 
         var postResponse = await _client.PostAsJsonAsync(

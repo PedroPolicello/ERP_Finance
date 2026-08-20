@@ -13,14 +13,13 @@ public class Product
     public ProductCategory Category { get; private set; }
     public string? ImageUrl { get; private set; }
     public ProductDetails Details { get; private set; }
-    public ProductInventory Inventory { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime LastUpdateAt { get; private set; }
 
     private Product()
     { }
 
-    public Product(string sku, string name, string description, decimal price, ProductCategory category, ProductDetails details, ProductInventory inventory, DateTime createdAt)
+    public Product(string sku, string name, string description, decimal price, ProductCategory category, ProductDetails details, DateTime createdAt)
     {
         ValidateSKU(sku);
         ValidateName(name);
@@ -28,7 +27,6 @@ public class Product
         ValidatePrice(price);
         ValidateCategory(category);
         ValidateDetails(details);
-        ValidateInventory(inventory);
 
         Id = Guid.NewGuid();
         SKU = sku.Trim().ToUpperInvariant();
@@ -37,28 +35,25 @@ public class Product
         Price = price;
         Category = category;
         Details = details;
-        Inventory = inventory;
         CreatedAt = createdAt;
         LastUpdateAt = createdAt;
 
         //SKU = SKUGenerator.GenerateSKU(Name, Details); // SKU é criado pelo usuario
     }
 
-    public void Update(string name, string description, decimal priceByUnit, ProductCategory category, ProductDetails details, ProductInventory inventory, DateTime lastUpdateAt)
+    public void Update(string name, string description, decimal priceByUnit, ProductCategory category, ProductDetails details, DateTime lastUpdateAt)
     {
         ValidateName(name);
         ValidateDescription(description);
         ValidatePrice(priceByUnit);
         ValidateCategory(category);
         ValidateDetails(details);
-        ValidateInventory(inventory);
 
         Name = name.Trim();
         Description = description.Trim();
         Price = priceByUnit;
         Category = category;
         Details = details;
-        Inventory = inventory;
         LastUpdateAt = lastUpdateAt;
 
         //SKU = SKUGenerator.GenerateSKU(Name, Details); // SKU é criado pelo usuario
@@ -83,7 +78,6 @@ public class Product
             && Details.WeightOrVolume == other.Details.WeightOrVolume
             && Details.MeasureType == other.Details.MeasureType;
     }
-
 
     private static void ValidateSKU(string sku)
     {
@@ -125,38 +119,7 @@ public class Product
 
         details.ValidateInfo(details.BrandName, details.WeightOrVolume, details.MeasureType);
     }
-
-    private static void ValidateInventory(ProductInventory inventory)
-    {
-        if (inventory == null)
-            throw new ArgumentNullException(nameof(inventory), "Stock information cannot be null.");
-
-        if (inventory.StockQuantity < 0)
-            throw new ArgumentOutOfRangeException(nameof(inventory.StockQuantity), "Stock quantity cannot be negative.");
-    }
 }
-
-
-public class ProductInventory
-{
-    public int StockQuantity { get; private set; }
-
-    public bool IsInStock => StockQuantity > 0;
-
-    public ProductInventory(int stockQuantity)
-    {
-        SetStockQuantity(stockQuantity);
-    }
-
-    public void SetStockQuantity(int quantity)
-    {
-        if (quantity < 0)
-            throw new ArgumentOutOfRangeException(nameof(quantity), "Stock quantity cannot be negative.");
-
-        StockQuantity = quantity;
-    }
-}
-
 
 public class ProductDetails
 {
@@ -204,3 +167,23 @@ public class ProductDetails
     }
 
 }
+
+//public class ProductInventory
+//{
+//    public int StockQuantity { get; private set; }
+
+//    public bool IsInStock => StockQuantity > 0;
+
+//    public ProductInventory(int stockQuantity)
+//    {
+//        SetStockQuantity(stockQuantity);
+//    }
+
+//    public void SetStockQuantity(int quantity)
+//    {
+//        if (quantity < 0)
+//            throw new ArgumentOutOfRangeException(nameof(quantity), "Stock quantity cannot be negative.");
+
+//        StockQuantity = quantity;
+//    }
+//}

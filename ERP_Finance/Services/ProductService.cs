@@ -13,12 +13,10 @@ public class ProductService
         _productRepository = productRepository;
     }
 
-    public AddProductResult AddProductService(CreateProductDTO productDTO)
+    public AddProductResult CreateProductService(CreateProductDTO productDTO)
     {
         if (productDTO == null)
             throw new ArgumentNullException(nameof(productDTO));
-
-        var stockInfo = new ProductInventory(productDTO.StockQuantity);
 
         var productDetails = new ProductDetails(
             productDTO.BrandName,
@@ -32,7 +30,6 @@ public class ProductService
             productDTO.Price,
             productDTO.Category,
             productDetails,
-            stockInfo,
             DateTime.UtcNow);
 
         var existingProduct = _productRepository.GetProductBySKU(productDTO.SKU);
@@ -41,7 +38,7 @@ public class ProductService
             if (!existingProduct.HasSameInfo(newProduct))
                 throw new InvalidOperationException("A product with the same SKU and different information already exists.");
 
-            existingProduct.Inventory.SetStockQuantity(existingProduct.Inventory.StockQuantity + productDTO.StockQuantity);
+            //existingProduct.Inventory.SetStockQuantity(existingProduct.Inventory.StockQuantity + productDTO.StockQuantity);
 
             existingProduct.Touch();
 
@@ -77,7 +74,6 @@ public class ProductService
         var price = product.Price;
         var category = product.Category;
         var productDetails = product.Details;
-        var stockInfo = product.Inventory;
 
         if (productDTO.Name is not null)
             name = productDTO.Name.Trim();
@@ -106,11 +102,7 @@ public class ProductService
 
         productDetails.UpdateDetails(brandName, weightOrVolume, measureType);
 
-        if (productDTO.StockQuantity.HasValue)
-            stockInfo.SetStockQuantity(productDTO.StockQuantity.Value);
-
-
-        product.Update(name, description, price, category, productDetails, stockInfo, DateTime.UtcNow);
+        product.Update(name, description, price, category, productDetails, DateTime.UtcNow);
 
         return _productRepository.UpdateInRepository(product);
     }
