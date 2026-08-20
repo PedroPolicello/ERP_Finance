@@ -1,5 +1,6 @@
 ﻿using ERP_Finance.Helpers;
 using ERP_Finance.Types;
+using System.Text.RegularExpressions;
 
 namespace ERP_Finance.Models;
 
@@ -38,7 +39,6 @@ public class Product
         CreatedAt = createdAt;
         LastUpdateAt = createdAt;
 
-        //SKU = SKUGenerator.GenerateSKU(Name, Details); // SKU é criado pelo usuario
     }
 
     public void Update(string name, string description, decimal priceByUnit, ProductCategory category, ProductDetails details, DateTime lastUpdateAt)
@@ -56,7 +56,6 @@ public class Product
         Details = details;
         LastUpdateAt = lastUpdateAt;
 
-        //SKU = SKUGenerator.GenerateSKU(Name, Details); // SKU é criado pelo usuario
     }
 
     public void Touch()
@@ -64,6 +63,7 @@ public class Product
         LastUpdateAt = DateTime.UtcNow;
     }
 
+    // Retirar HAS SAME INFO
     public bool HasSameInfo(Product other)
     {
         ArgumentNullException.ThrowIfNull(other);
@@ -84,8 +84,10 @@ public class Product
         if (string.IsNullOrWhiteSpace(sku))
             throw new ArgumentException("SKU cannot be null or empty.", nameof(sku));
 
-        if (sku.Length < 3 || sku.Length > 50)
-            throw new ArgumentException("SKU must be between 3 and 50 characters.", nameof(sku));
+        var skuPattern = @"^\d{3}-\d{3}-\d{3}$";
+
+        if (!Regex.IsMatch(sku, skuPattern))
+            throw new ArgumentException("SKU must be in the format 000-000-000 (9 digits separated by hyphens).", nameof(sku));
     }
 
     private static void ValidateName(string name)

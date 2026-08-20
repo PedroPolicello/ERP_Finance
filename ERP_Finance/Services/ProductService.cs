@@ -24,6 +24,7 @@ public class ProductService
             productDTO.WeightOrVolume,
             productDTO.MeasureType);
 
+
         // ========== Verificação de SKU ==========
 
         var sku = string.Empty;
