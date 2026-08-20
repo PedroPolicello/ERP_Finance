@@ -8,7 +8,7 @@ namespace ERP_Finance.Tests.Unit.Services;
 public class ProductServiceTests
 {
     [Fact]
-    public void AddProduct_WithNewSku_ShouldCreateProduct()
+    public void AddProduct_WithValidInfo_ShouldCreateProduct()
     {
         // Arrange
         var fakeRepository = new Fakes.FakeProductRepository();
@@ -21,8 +21,6 @@ public class ProductServiceTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.True(result.WasCreated);
-        Assert.Equal("SKU123", result.Product.SKU);
         Assert.Single(fakeRepository.AllProducts);
     }
 
@@ -64,7 +62,7 @@ public class ProductServiceTests
             productService.CreateProductService(
                 CreateProductDto());
 
-        var productId = addResult.Product.Id;
+        var productId = addResult.Id;
 
         // Act
         var result =
@@ -107,7 +105,7 @@ public class ProductServiceTests
             productService.CreateProductService(
                 CreateProductDto());
 
-        var productId = addResult.Product.Id;
+        var productId = addResult.Id;
 
         var updateDto = new UpdateProductDTO
         {
@@ -184,7 +182,7 @@ public class ProductServiceTests
             productService.CreateProductService(
                 CreateProductDto());
 
-        var productId = addResult.Product.Id;
+        var productId = addResult.Id;
 
         // Act
         var result =
@@ -226,7 +224,6 @@ public class ProductServiceTests
     {
         return new CreateProductDTO
         {
-            SKU = "SKU123",
             Name = name,
             Description = "This is a test product.",
             Price = 99.99m,

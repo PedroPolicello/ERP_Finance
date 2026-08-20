@@ -37,10 +37,6 @@ public class ProductApiTests
             .ReadFromJsonAsync<JsonElement>();
 
         Assert.Equal(
-            productDto.SKU.ToUpperInvariant(),
-            body.GetProperty("sku").GetString());
-
-        Assert.Equal(
             productDto.Name,
             body.GetProperty("name").GetString());
     }
@@ -74,10 +70,6 @@ public class ProductApiTests
         Assert.Equal(
             productId,
             body.GetProperty("id").GetGuid());
-
-        Assert.Equal(
-            productDto.SKU.ToUpperInvariant(),
-            body.GetProperty("sku").GetString());
 
         Assert.Equal(
             productDto.Name,
@@ -246,7 +238,6 @@ public class ProductApiTests
     {
         return new CreateProductDTO
         {
-            SKU = $"SKU-{Guid.NewGuid():N}",
             Name = name ?? "Test Product",
             Description = "This is a test product.",
             Price = 99.99m,

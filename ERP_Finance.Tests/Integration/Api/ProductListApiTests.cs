@@ -24,7 +24,6 @@ public class ProductListApiTests
         // Arrange
         var productDto = new CreateProductDTO
         {
-            SKU = $"SKU-{Guid.NewGuid():N}",
             Name = "Product In List",
             Description = "Product created for list integration testing.",
             Price = 39.90m,
@@ -57,12 +56,5 @@ public class ProductListApiTests
         Assert.Equal(
             JsonValueKind.Array,
             body.ValueKind);
-
-        Assert.Contains(
-            body.EnumerateArray(),
-            product =>
-                product.GetProperty("sku")
-                    .GetString() ==
-                productDto.SKU.ToUpperInvariant());
     }
 }

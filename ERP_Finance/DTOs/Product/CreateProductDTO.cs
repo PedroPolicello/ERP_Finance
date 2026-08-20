@@ -7,10 +7,6 @@ namespace ERP_Finance.DTOs.Product;
 public class CreateProductDTO
 {
     [Required]
-    [StringLength(50, MinimumLength = 3)]
-    public string SKU { get; set; } = string.Empty;
-
-    [Required]
     [StringLength(50, MinimumLength = 1)]
     public string Name { get; set; } = string.Empty;
 

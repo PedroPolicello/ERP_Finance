@@ -1,4 +1,5 @@
 ﻿using ERP_Finance.DTOs.Product;
+using ERP_Finance.Helpers;
 using ERP_Finance.Models;
 using ERP_Finance.Repositories.Interfaces;
 
@@ -13,7 +14,7 @@ public class ProductService
         _productRepository = productRepository;
     }
 
-    public AddProductResult CreateProductService(CreateProductDTO productDTO)
+    public Product CreateProductService(CreateProductDTO productDTO)
     {
         if (productDTO == null)
             throw new ArgumentNullException(nameof(productDTO));
@@ -23,8 +24,28 @@ public class ProductService
             productDTO.WeightOrVolume,
             productDTO.MeasureType);
 
+        // ========== Verificação de SKU ==========
+
+        var sku = string.Empty;
+        Product? existingProduct = null;
+        const int maxAttempts = 10;
+
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            sku = SKUGenerator.GenerateSKU();
+            existingProduct = _productRepository.GetProductBySKU(sku);
+
+            if (existingProduct == null)
+                break;
+        }
+
+        if (existingProduct != null)
+            throw new InvalidOperationException($"Could not generate a unique SKU after {maxAttempts} attempts.");
+
+        // ========== Verificação de SKU ==========
+
         var newProduct = new Product(
-            productDTO.SKU,
+            sku,
             productDTO.Name,
             productDTO.Description,
             productDTO.Price,
@@ -32,30 +53,12 @@ public class ProductService
             productDetails,
             DateTime.UtcNow);
 
-        var existingProduct = _productRepository.GetProductBySKU(productDTO.SKU);
-        if (existingProduct is not null)
-        {
-            if (!existingProduct.HasSameInfo(newProduct))
-                throw new InvalidOperationException("A product with the same SKU and different information already exists.");
-
-            //existingProduct.Inventory.SetStockQuantity(existingProduct.Inventory.StockQuantity + productDTO.StockQuantity);
-
-            existingProduct.Touch();
-
-            var updated = _productRepository.UpdateInRepository(existingProduct);
-
-            if (!updated)
-                throw new InvalidOperationException("The existing product could not be updated.");
-
-            return new AddProductResult(existingProduct, WasCreated: false);
-        }
-
         var created = _productRepository.AddToRepository(newProduct);
 
         if (!created)
             throw new InvalidOperationException("The product could not be created.");
 
-        return new AddProductResult(newProduct, WasCreated: true);
+        return newProduct;
     }
 
     public bool UpdateProductService(Guid id, UpdateProductDTO productDTO)

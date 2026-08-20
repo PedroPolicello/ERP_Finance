@@ -37,13 +37,7 @@ public class ProductController : ControllerBase
     {
         var result = _productService.CreateProductService(productDTO);
 
-        if (!result.WasCreated)
-            return Ok(result.Product);
-
-        return CreatedAtAction(
-            nameof(GetProduct),
-            new { id = result.Product.Id },
-            result.Product);
+        return CreatedAtAction(nameof(GetProduct), new { id = result.Id }, result);
     }
 
     [HttpPatch("{id:guid}")]
@@ -51,7 +45,7 @@ public class ProductController : ControllerBase
     {
         var updated = _productService.UpdateProductService(id, productDTO);
 
-        if(!updated)
+        if (!updated)
             return BadRequest();
 
         return Ok();

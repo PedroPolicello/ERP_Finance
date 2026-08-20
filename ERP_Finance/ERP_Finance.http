@@ -4,15 +4,13 @@
 POST {{ERP_Finance_HostAddress}}/api/product
 Content-Type: application/json
 {
-  "sku": "COCA-COLA-1000ML",
-  "name": "Coca-Cola",
-  "description": "Refrigerante de cola",
-  "price": 12.00,
-  "category": 4,
-  "brandName": "Coca-Cola",
-  "weightOrVolume": 1,
-  "measureType": 3,
-  "stockQuantity": -10
+  "name": "Coxinha de Frango",
+  "description": "Coxinha tradicional recheada com frango",
+  "price": 8.50,
+  "category": 0,
+  "brandName": "Produção própria",
+  "weightOrVolume": 120,
+  "measureType": 2
 }
 
 ###
@@ -23,12 +21,12 @@ GET {{ERP_Finance_HostAddress}}/api/product
 ###
 
 //GetById
-GET {{ERP_Finance_HostAddress}}/api/product/00000000-0000-0000-0000-000000000000
+GET {{ERP_Finance_HostAddress}}/api/product/09bfec1b-f987-4be7-b72d-2cbb0935e51b
 
 ###
 
 //Update
-PATCH {{ERP_Finance_HostAddress}}/api/product/68f69df0-441a-46a5-8f06-ad7ff122a853
+PATCH {{ERP_Finance_HostAddress}}/api/product/897e8471-53a7-4562-ad3e-edc95fb13e3c
 Content-Type: application/json
 {
   "price": 10.00
@@ -37,7 +35,7 @@ Content-Type: application/json
 ###
 
 //Delete
-DELETE {{ERP_Finance_HostAddress}}/api/product/68f69df0-441a-46a5-8f06-ad7ff122a853
+DELETE {{ERP_Finance_HostAddress}}/api/product/897e8471-53a7-4562-ad3e-edc95fb13e3c
 
 ###
 
