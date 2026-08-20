@@ -76,4 +76,20 @@ public class ProductRepository : Interfaces.IProductRepository
 
         return _context.Products.FirstOrDefault(product => product.SKU == normalizedSku);
     }
+
+    public IReadOnlyList<Product> GetProductsByName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return [];
+
+        var normalizedName = name.Trim();
+
+        return _context.Products
+            .AsNoTracking()
+            .Where(product =>
+                EF.Functions.Like(
+                    product.Name,
+                    $"%{normalizedName}%"))
+            .ToList();
+    }
 }

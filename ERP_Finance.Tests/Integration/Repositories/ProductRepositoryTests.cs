@@ -243,7 +243,86 @@ public class ProductRepositoryTests
         Assert.Empty(repository.AllProducts);
     }
 
-    private static Product CreateProduct()
+    [Fact]
+    public void GetProductsByName_WithMatchingName_ShouldReturnSimilarProducts()
+    {
+        // Arrange
+        using var context = CreateContext();
+        var repository = new ProductRepository(context);
+
+        var matchingProduct = CreateProduct(
+            name: "Arroz Branco Tipo 1");
+
+        var anotherMatchingProduct = CreateProduct(
+            name: "Arroz Integral");
+
+        var nonMatchingProduct = CreateProduct(
+            name: "Feijao Carioca");
+
+        repository.AddToRepository(matchingProduct);
+        repository.AddToRepository(anotherMatchingProduct);
+        repository.AddToRepository(nonMatchingProduct);
+
+        // Act
+        var result = repository.GetProductsByName("arroz");
+
+        // Assert
+        Assert.Equal(2, result.Count);
+
+        Assert.Contains(
+            result,
+            product => product.Id == matchingProduct.Id);
+
+        Assert.Contains(
+            result,
+            product => product.Id == anotherMatchingProduct.Id);
+
+        Assert.DoesNotContain(
+            result,
+            product => product.Id == nonMatchingProduct.Id);
+    }
+
+    [Fact]
+    public void GetProductsByName_WithDifferentLetterCase_ShouldReturnMatchingProducts()
+    {
+        // Arrange
+        using var context = CreateContext();
+        var repository = new ProductRepository(context);
+
+        var product = CreateProduct(
+            name: "Macarrao Parafuso");
+
+        repository.AddToRepository(product);
+
+        // Act
+        var result = repository.GetProductsByName("MACARRAO");
+
+        // Assert
+        Assert.Single(result);
+
+        Assert.Equal(
+            product.Id,
+            result[0].Id);
+    }
+
+    [Fact]
+    public void GetProductsByName_WithEmptyName_ShouldReturnEmptyList()
+    {
+        // Arrange
+        using var context = CreateContext();
+        var repository = new ProductRepository(context);
+
+        repository.AddToRepository(
+            CreateProduct(name: "Produto Existente"));
+
+        // Act
+        var result = repository.GetProductsByName("   ");
+
+        // Assert
+        Assert.Empty(result);
+    }
+
+    private static Product CreateProduct(string name = "Test Product")
     {
         var details = new ProductDetails(
             "Test Brand",
@@ -258,7 +337,7 @@ public class ProductRepositoryTests
 
         return new Product(
             sku: sku,
-            name: "Test Product",
+            name: name,
             description: "This is a test product.",
             price: 99.99m,
             category: ProductCategory.Salgados,

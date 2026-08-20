@@ -132,4 +132,12 @@ public class ProductService
     }
 
     public IReadOnlyList<Product> GetAllProductsService() => _productRepository.AllProducts;
+
+    public IReadOnlyList<Product> GetProductsByNameService(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return [];
+
+        return _productRepository.GetProductsByName(name);
+    }
 }

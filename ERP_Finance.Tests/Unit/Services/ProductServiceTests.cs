@@ -268,6 +268,61 @@ public class ProductServiceTests
             exception.Message);
     }
 
+    [Fact]
+    public void GetProductsByName_WithMatchingName_ShouldReturnSimilarProducts()
+    {
+        // Arrange
+        var fakeRepository = new Fakes.FakeProductRepository();
+        var productService = new ProductService(fakeRepository);
+
+        var matchingProduct = productService.CreateProductService(
+            CreateProductDto(name: "Arroz Branco Tipo 1"));
+
+        var anotherMatchingProduct = productService.CreateProductService(
+            CreateProductDto(name: "Arroz Integral"));
+
+        var nonMatchingProduct = productService.CreateProductService(
+            CreateProductDto(name: "Feijao Carioca"));
+
+        // Act
+        var result = productService.GetProductsByNameService("arroz");
+
+        // Assert
+        Assert.Equal(2, result.Count);
+
+        Assert.Contains(
+            result,
+            product => product.Id == matchingProduct.Id);
+
+        Assert.Contains(
+            result,
+            product => product.Id == anotherMatchingProduct.Id);
+
+        Assert.DoesNotContain(
+            result,
+            product => product.Id == nonMatchingProduct.Id);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void GetProductsByName_WithEmptyName_ShouldReturnEmptyList(
+        string name)
+    {
+        // Arrange
+        var fakeRepository = new Fakes.FakeProductRepository();
+        var productService = new ProductService(fakeRepository);
+
+        productService.CreateProductService(
+            CreateProductDto(name: "Produto Existente"));
+
+        // Act
+        var result = productService.GetProductsByNameService(name);
+
+        // Assert
+        Assert.Empty(result);
+    }
+
     private static CreateProductDTO CreateProductDto(
         string name = "Test Product")
     {

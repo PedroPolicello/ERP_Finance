@@ -53,4 +53,20 @@ public class FakeProductRepository : IProductRepository
 
         return existingProduct is not null;
     }
+
+    public IReadOnlyList<Product> GetProductsByName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return [];
+
+        var normalizedName = name.Trim();
+
+        return _products
+            .Where(product =>
+                product.Name.Contains(
+                    normalizedName,
+                    StringComparison.OrdinalIgnoreCase))
+            .ToList()
+            .AsReadOnly();
+    }
 }

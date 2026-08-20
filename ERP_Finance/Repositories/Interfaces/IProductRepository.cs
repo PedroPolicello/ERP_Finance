@@ -10,4 +10,5 @@ public interface IProductRepository
     IReadOnlyList<Product> AllProducts { get; }
     Product? GetProductById(Guid id);
     Product? GetProductBySKU(string sku);
+    IReadOnlyList<Product> GetProductsByName(string name);
 }

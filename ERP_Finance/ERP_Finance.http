@@ -4,11 +4,11 @@
 POST {{ERP_Finance_HostAddress}}/api/product
 Content-Type: application/json
 {
-  "name": "Arroz Branco Tipo 1",
-  "description": "Arroz branco polido, grãos longos e finos",
-  "price": 24.90,
+  "name": "Arroz Integral",
+  "description": "Arroz Integral",
+  "price": 29.90,
   "category": 1,
-  "brandName": "Tio João",
+  "brandName": "Tio Pedro",
   "weightOrVolume": 5,
   "measureType": 1
 }
@@ -17,6 +17,11 @@ Content-Type: application/json
 
 //GetAll
 GET {{ERP_Finance_HostAddress}}/api/product
+
+###
+
+//Search By Name
+GET {{ERP_Finance_HostAddress}}/api/Product/search?name=arroz
 
 ###
 

@@ -24,6 +24,18 @@ public class ProductController : ControllerBase
         return Ok(products);
     }
 
+    [HttpGet("search")]
+    public ActionResult<IReadOnlyList<Product>> GetProductsByName(
+    [FromQuery] string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return Ok(Array.Empty<Product>());
+
+        var products = _productService.GetProductsByNameService(name);
+
+        return Ok(products);
+    }
+
     [HttpGet("{id:guid}")]
     public ActionResult<Product> GetProduct(Guid id)
     {
@@ -45,7 +57,7 @@ public class ProductController : ControllerBase
     {
         var updated = _productService.UpdateProductService(id, productDTO);
 
-        if(!updated)
+        if (!updated)
             return BadRequest();
 
         return Ok();
