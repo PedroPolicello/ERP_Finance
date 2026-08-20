@@ -19,7 +19,7 @@ public class ProductListApiTests
     }
 
     [Fact]
-    public async Task GetProducts_ShouldReturnOkWithProductList()
+    public async Task GetProducts_ShouldReturnOkWithCreatedProduct()
     {
         // Arrange
         var productDto = new CreateProductDTO
@@ -30,7 +30,7 @@ public class ProductListApiTests
             Category = ProductCategory.Salgados,
             BrandName = "Test Brand",
             WeightOrVolume = 1.0m,
-            MeasureType = MeasureType.Kilogram,
+            MeasureType = MeasureType.Kilogram
         };
 
         var postResponse = await _client.PostAsJsonAsync(
@@ -41,6 +41,13 @@ public class ProductListApiTests
             HttpStatusCode.Created,
             postResponse.StatusCode);
 
+        var createdProduct = await postResponse.Content
+            .ReadFromJsonAsync<JsonElement>();
+
+        var createdProductId = createdProduct
+            .GetProperty("id")
+            .GetGuid();
+
         // Act
         var response = await _client.GetAsync(
             "/api/Product");
@@ -50,11 +57,18 @@ public class ProductListApiTests
             HttpStatusCode.OK,
             response.StatusCode);
 
-        var body = await response.Content
+        var products = await response.Content
             .ReadFromJsonAsync<JsonElement>();
 
         Assert.Equal(
             JsonValueKind.Array,
-            body.ValueKind);
+            products.ValueKind);
+
+        var productWasFound = products
+            .EnumerateArray()
+            .Any(product =>
+                product.GetProperty("id").GetGuid() == createdProductId);
+
+        Assert.True(productWasFound);
     }
 }

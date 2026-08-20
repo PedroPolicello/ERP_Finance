@@ -9,37 +9,32 @@ public class ProductTests
     public void CreateProduct_WithValidData_ShouldCreateProduct()
     {
         // Arrange & Act
-        var product = MockProduct(productName: "Test Product", sku: "SKU123");
+        var product = CreateProduct(
+            productName: "Test Product",
+            sku: "123-456-789");
 
         // Assert
         Assert.NotNull(product);
-        Assert.Equal("SKU123", product.SKU);
+        Assert.Equal("123-456-789", product.SKU);
         Assert.Equal("Test Product", product.Name);
     }
 
-
-    [Fact]
-    public void CreateProduct_WithEmptySku_ShouldThrowException()
-    {
-        // Arrange
-        var action = () => MockProduct(productName: "Test Product", sku: string.Empty);
-
-        // Act
-        var exception = Assert.Throws<ArgumentException>(action);
-
-        // Assert
-        Assert.Equal(
-            "SKU cannot be null or empty. (Parameter 'sku')",
-            exception.Message);
-    }
-
     [Theory]
-    [InlineData("A")]
-    [InlineData("AB")]
-    public void CreateProduct_WithInvalidSkuLength_ShouldThrowException(string sku)
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("123456789")]
+    [InlineData("123-456-78")]
+    [InlineData("123-456-7890")]
+    [InlineData("ABC-DEF-GHI")]
+    [InlineData("123 456 789")]
+    [InlineData("123-456-78A")]
+    public void CreateProduct_WithInvalidSkuFormat_ShouldThrowException(
+        string sku)
     {
         // Arrange
-        var action = () => MockProduct(productName: "Test Product", sku: sku);
+        var action = () => CreateProduct(
+            productName: "Test Product",
+            sku: sku);
 
         // Act
         var exception = Assert.Throws<ArgumentException>(action);
@@ -49,42 +44,88 @@ public class ProductTests
     }
 
     [Fact]
-    public void Products_WithSameInformation_ShouldReturnTrue()
+    public void CreateProduct_WithSkuContainingSpaces_ShouldThrowException()
     {
         // Arrange
-        var product1 = MockProduct(productName: "Test Product", sku: "SKU123");
-        var product2 = MockProduct(productName: "Test Product", sku: "SKU123");
+        var action = () => CreateProduct(
+            productName: "Test Product",
+            sku: " 123-456-789 ");
 
         // Act
-        var result = product1.HasSameInfo(product2);
+        var exception = Assert.Throws<ArgumentException>(action);
 
         // Assert
-        Assert.True(result);
+        Assert.Contains("SKU", exception.Message);
     }
 
     [Fact]
-    public void Products_WithDifferentInformation_ShouldReturnFalse()
+    public void CreateProduct_ShouldTrimTextFields()
     {
-        // Arrange
-        var product1 = MockProduct(productName: "Test Product", sku: "SKU123");
-        var product2 = MockProduct(productName: "Different Product", sku: "SKU123");
-
-        // Act
-        var result = product1.HasSameInfo(product2);
+        // Arrange & Act
+        var product = CreateProduct(
+            productName: "  Test Product  ",
+            sku: "123-456-789",
+            description: "  Test description.  ",
+            brandName: "  Test Brand  ");
 
         // Assert
-        Assert.False(result);
+        Assert.Equal("Test Product", product.Name);
+        Assert.Equal("Test description.", product.Description);
+        Assert.Equal("Test Brand", product.Details.BrandName);
+    }
+
+    [Fact]
+    public void UpdateProduct_WithValidData_ShouldUpdateFieldsAndKeepSku()
+    {
+        // Arrange
+        var product = CreateProduct(
+            productName: "Original Product",
+            sku: "123-456-789");
+
+        var originalSku = product.SKU;
+        var originalCreatedAt = product.CreatedAt;
+
+        var updatedDetails = new ProductDetails(
+            "Updated Brand",
+            2.0m,
+            MeasureType.Liter);
+
+        var lastUpdateAt = DateTime.UtcNow;
+
+        // Act
+        product.Update(
+            "Updated Product",
+            "Updated description.",
+            79.99m,
+            ProductCategory.Doces,
+            updatedDetails,
+            lastUpdateAt);
+
+        // Assert
+        Assert.Equal("Updated Product", product.Name);
+        Assert.Equal("Updated description.", product.Description);
+        Assert.Equal(79.99m, product.Price);
+        Assert.Equal(ProductCategory.Doces, product.Category);
+        Assert.Equal("Updated Brand", product.Details.BrandName);
+        Assert.Equal(2.0m, product.Details.WeightOrVolume);
+        Assert.Equal(MeasureType.Liter, product.Details.MeasureType);
+        Assert.Equal(originalSku, product.SKU);
+        Assert.Equal(originalCreatedAt, product.CreatedAt);
+        Assert.Equal(lastUpdateAt, product.LastUpdateAt);
     }
 
     [Fact]
     public void Touch_ShouldUpdateLastUpdateAt()
     {
         // Arrange
-        var product = MockProduct(productName: "Test Product", sku: "SKU123");
+        var createdAt = DateTime.UtcNow.AddMinutes(-1);
+
+        var product = CreateProduct(
+            productName: "Test Product",
+            sku: "123-456-789",
+            createdAt: createdAt);
 
         var originalLastUpdateAt = product.LastUpdateAt;
-
-        Thread.Sleep(10);
 
         // Act
         product.Touch();
@@ -93,22 +134,25 @@ public class ProductTests
         Assert.True(product.LastUpdateAt > originalLastUpdateAt);
     }
 
-    private Product MockProduct(string productName, string sku)
+    private static Product CreateProduct(
+        string productName,
+        string sku,
+        string description = "This is a test product.",
+        string brandName = "Test Brand",
+        DateTime? createdAt = null)
     {
         var productDetails = new ProductDetails(
-            "Test Brand",
+            brandName,
             1.5m,
             MeasureType.Kilogram);
-
 
         return new Product(
             sku: sku,
             name: productName,
-            description: "This is a test product.",
+            description: description,
             price: 99.99m,
             category: ProductCategory.Salgados,
             details: productDetails,
-            createdAt: DateTime.UtcNow);
+            createdAt: createdAt ?? DateTime.UtcNow);
     }
-
 }

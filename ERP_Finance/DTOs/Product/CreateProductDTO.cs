@@ -1,5 +1,4 @@
-﻿using ERP_Finance.Models;
-using ERP_Finance.Types;
+﻿using ERP_Finance.Types;
 using System.ComponentModel.DataAnnotations;
 
 namespace ERP_Finance.DTOs.Product;

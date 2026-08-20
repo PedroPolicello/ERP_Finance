@@ -4,15 +4,13 @@
 POST {{ERP_Finance_HostAddress}}/api/product
 Content-Type: application/json
 {
-  "sku": "COCA-COLA-1000ML",
-  "name": "Coca-Cola",
-  "description": "Refrigerante de cola",
-  "price": 12.00,
-  "category": 4,
-  "brandName": "Coca-Cola",
-  "weightOrVolume": 1,
-  "measureType": 3,
-  "stockQuantity": -10
+  "name": "Arroz Branco Tipo 1",
+  "description": "Arroz branco polido, grãos longos e finos",
+  "price": 24.90,
+  "category": 1,
+  "brandName": "Tio João",
+  "weightOrVolume": 5,
+  "measureType": 1
 }
 
 ###
@@ -23,21 +21,21 @@ GET {{ERP_Finance_HostAddress}}/api/product
 ###
 
 //GetById
-GET {{ERP_Finance_HostAddress}}/api/product/00000000-0000-0000-0000-000000000000
+GET {{ERP_Finance_HostAddress}}/api/product/705f58e3-6095-4ac0-ac1b-91921bc80a38
 
 ###
 
 //Update
-PATCH {{ERP_Finance_HostAddress}}/api/product/68f69df0-441a-46a5-8f06-ad7ff122a853
+PATCH {{ERP_Finance_HostAddress}}/api/product/705f58e3-6095-4ac0-ac1b-91921bc80a38
 Content-Type: application/json
 {
-  "price": 10.00
+  "price": 30.00
 }
 
 ###
 
 //Delete
-DELETE {{ERP_Finance_HostAddress}}/api/product/68f69df0-441a-46a5-8f06-ad7ff122a853
+DELETE {{ERP_Finance_HostAddress}}/api/product/705f58e3-6095-4ac0-ac1b-91921bc80a38
 
 ###
 

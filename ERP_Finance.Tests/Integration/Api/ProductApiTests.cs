@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using ERP_Finance.DTOs.Product;
 using ERP_Finance.Tests.Integration.Infrastructure;
 using ERP_Finance.Types;
@@ -18,7 +19,7 @@ public class ProductApiTests
     }
 
     [Fact]
-    public async Task PostProduct_WithValidData_ShouldReturnCreated()
+    public async Task PostProduct_WithValidData_ShouldReturnCreatedWithGeneratedSku()
     {
         // Arrange
         var productDto = CreateProductDto();
@@ -39,6 +40,14 @@ public class ProductApiTests
         Assert.Equal(
             productDto.Name,
             body.GetProperty("name").GetString());
+
+        var sku = body.GetProperty("sku").GetString();
+
+        Assert.NotNull(sku);
+
+        Assert.Matches(
+            @"^\d{3}-\d{3}-\d{3}$",
+            sku);
     }
 
     [Fact]
@@ -93,7 +102,7 @@ public class ProductApiTests
     }
 
     [Fact]
-    public async Task PatchProduct_WithExistingId_ShouldReturnOk()
+    public async Task PatchProduct_WithExistingId_ShouldUpdateFieldsAndKeepSku()
     {
         // Arrange
         var productDto = CreateProductDto();
@@ -105,6 +114,10 @@ public class ProductApiTests
             .GetProperty("id")
             .GetGuid();
 
+        var originalSku = createdProduct
+            .GetProperty("sku")
+            .GetString();
+
         var updateDto = new UpdateProductDTO
         {
             Name = "Updated Product",
@@ -113,7 +126,7 @@ public class ProductApiTests
             Category = ProductCategory.Doces,
             BrandName = "Updated Brand",
             WeightOrVolume = 2.0m,
-            MeasureType = MeasureType.Liter,
+            MeasureType = MeasureType.Liter
         };
 
         // Act
@@ -147,6 +160,10 @@ public class ProductApiTests
         Assert.Equal(
             79.99m,
             body.GetProperty("price").GetDecimal());
+
+        Assert.Equal(
+            originalSku,
+            body.GetProperty("sku").GetString());
     }
 
     [Fact]
@@ -244,7 +261,7 @@ public class ProductApiTests
             Category = ProductCategory.Salgados,
             BrandName = "Test Brand",
             WeightOrVolume = 1.5m,
-            MeasureType = MeasureType.Kilogram,
+            MeasureType = MeasureType.Kilogram
         };
     }
 }

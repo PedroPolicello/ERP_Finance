@@ -2,7 +2,6 @@
 using ERP_Finance.Models;
 using ERP_Finance.Repositories;
 using ERP_Finance.Types;
-
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -102,7 +101,7 @@ public class ProductRepositoryTests
 
         // Act
         var result = repository.GetProductBySKU(
-            product.SKU.ToLowerInvariant());
+            $"  {product.SKU.ToLowerInvariant()}  ");
 
         // Assert
         Assert.NotNull(result);
@@ -136,12 +135,17 @@ public class ProductRepositoryTests
 
         repository.AddToRepository(product);
 
+        var updatedDetails = new ProductDetails(
+            "Updated Brand",
+            2.0m,
+            MeasureType.Liter);
+
         product.Update(
             "Updated Product",
             "Updated description.",
             75.50m,
             ProductCategory.Doces,
-            product.Details,
+            updatedDetails,
             DateTime.UtcNow);
 
         // Act
@@ -159,8 +163,28 @@ public class ProductRepositoryTests
             updatedProduct.Name);
 
         Assert.Equal(
+            "Updated description.",
+            updatedProduct.Description);
+
+        Assert.Equal(
             75.50m,
             updatedProduct.Price);
+
+        Assert.Equal(
+            ProductCategory.Doces,
+            updatedProduct.Category);
+
+        Assert.Equal(
+            "Updated Brand",
+            updatedProduct.Details.BrandName);
+
+        Assert.Equal(
+            2.0m,
+            updatedProduct.Details.WeightOrVolume);
+
+        Assert.Equal(
+            MeasureType.Liter,
+            updatedProduct.Details.MeasureType);
     }
 
     [Fact]
@@ -197,6 +221,7 @@ public class ProductRepositoryTests
         // Assert
         Assert.True(result);
         Assert.Empty(repository.AllProducts);
+
         Assert.Null(
             repository.GetProductById(product.Id));
     }
@@ -225,9 +250,14 @@ public class ProductRepositoryTests
             1.5m,
             MeasureType.Kilogram);
 
+        var randomNumber = Random.Shared.Next(
+            0,
+            1_000_000_000);
+
+        var sku = randomNumber.ToString("000-000-000");
 
         return new Product(
-            sku: $"SKU-{Guid.NewGuid():N}".ToUpperInvariant(),
+            sku: sku,
             name: "Test Product",
             description: "This is a test product.",
             price: 99.99m,

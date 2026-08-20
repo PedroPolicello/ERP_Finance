@@ -1,5 +1,4 @@
 ﻿using ERP_Finance.DTOs.Product;
-using ERP_Finance.Models;
 using ERP_Finance.Service;
 using ERP_Finance.Types;
 
@@ -8,7 +7,7 @@ namespace ERP_Finance.Tests.Unit.Services;
 public class ProductServiceTests
 {
     [Fact]
-    public void AddProduct_WithValidInfo_ShouldCreateProduct()
+    public void CreateProduct_WithValidInfo_ShouldCreateProductWithGeneratedSku()
     {
         // Arrange
         var fakeRepository = new Fakes.FakeProductRepository();
@@ -22,33 +21,26 @@ public class ProductServiceTests
         // Assert
         Assert.NotNull(result);
         Assert.Single(fakeRepository.AllProducts);
+        Assert.Matches(
+            @"^\d{3}-\d{3}-\d{3}$",
+            result.SKU);
     }
 
     [Fact]
-    public void AddProduct_WithExistingSkuAndDifferentInformation_ShouldThrowException()
+    public void CreateProduct_WithNullDto_ShouldThrowException()
     {
         // Arrange
         var fakeRepository = new Fakes.FakeProductRepository();
         var productService = new ProductService(fakeRepository);
 
-        var firstDto = CreateProductDto();
-
-        var secondDto = CreateProductDto(
-            name: "Another Product");
-
         // Act
-        productService.CreateProductService(firstDto);
-
-        var exception = Assert.Throws<InvalidOperationException>(() =>
-        {
-            productService.CreateProductService(secondDto);
-        });
+        var exception = Assert.Throws<ArgumentNullException>(() =>
+            productService.CreateProductService(null!));
 
         // Assert
-        Assert.Single(fakeRepository.AllProducts);
         Assert.Equal(
-            "A product with the same SKU and different information already exists.",
-            exception.Message);
+            "productDTO",
+            exception.ParamName);
     }
 
     [Fact]
@@ -58,20 +50,17 @@ public class ProductServiceTests
         var fakeRepository = new Fakes.FakeProductRepository();
         var productService = new ProductService(fakeRepository);
 
-        var addResult =
-            productService.CreateProductService(
-                CreateProductDto());
-
-        var productId = addResult.Id;
+        var createdProduct = productService
+            .CreateProductService(CreateProductDto());
 
         // Act
-        var result =
-            productService.GetProductService(productId);
+        var result = productService.GetProductService(
+            createdProduct.Id);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(productId, result.Id);
-        Assert.Equal("SKU123", result.SKU);
+        Assert.Equal(createdProduct.Id, result.Id);
+        Assert.Equal(createdProduct.SKU, result.SKU);
     }
 
     [Fact]
@@ -84,9 +73,7 @@ public class ProductServiceTests
 
         // Act
         var exception = Assert.Throws<KeyNotFoundException>(() =>
-        {
-            productService.GetProductService(nonExistingId);
-        });
+            productService.GetProductService(nonExistingId));
 
         // Assert
         Assert.Equal(
@@ -95,17 +82,16 @@ public class ProductServiceTests
     }
 
     [Fact]
-    public void UpdateProduct_WithExistingId_ShouldUpdateProduct()
+    public void UpdateProduct_WithExistingId_ShouldUpdateProductAndKeepSku()
     {
         // Arrange
         var fakeRepository = new Fakes.FakeProductRepository();
         var productService = new ProductService(fakeRepository);
 
-        var addResult =
-            productService.CreateProductService(
-                CreateProductDto());
+        var createdProduct = productService
+            .CreateProductService(CreateProductDto());
 
-        var productId = addResult.Id;
+        var originalSku = createdProduct.SKU;
 
         var updateDto = new UpdateProductDTO
         {
@@ -115,32 +101,104 @@ public class ProductServiceTests
             Category = ProductCategory.Doces,
             BrandName = "Updated Brand",
             WeightOrVolume = 2.0m,
-            MeasureType = MeasureType.Liter,
+            MeasureType = MeasureType.Liter
         };
 
         // Act
-        var result =
-            productService.UpdateProductService(
-                productId,
-                updateDto);
+        var result = productService.UpdateProductService(
+            createdProduct.Id,
+            updateDto);
 
         // Assert
         Assert.True(result);
 
-        var updatedProduct =
-            productService.GetProductService(productId);
+        var updatedProduct = productService.GetProductService(
+            createdProduct.Id);
 
-        Assert.Equal(
-            "Updated Product",
-            updatedProduct.Name);
-
+        Assert.Equal("Updated Product", updatedProduct.Name);
         Assert.Equal(
             "This is an updated test product.",
             updatedProduct.Description);
+        Assert.Equal(79.99m, updatedProduct.Price);
+        Assert.Equal(ProductCategory.Doces, updatedProduct.Category);
+        Assert.Equal("Updated Brand", updatedProduct.Details.BrandName);
+        Assert.Equal(2.0m, updatedProduct.Details.WeightOrVolume);
+        Assert.Equal(MeasureType.Liter, updatedProduct.Details.MeasureType);
+        Assert.Equal(originalSku, updatedProduct.SKU);
+    }
 
+    [Fact]
+    public void UpdateProduct_WithPartialData_ShouldKeepFieldsNotSent()
+    {
+        // Arrange
+        var fakeRepository = new Fakes.FakeProductRepository();
+        var productService = new ProductService(fakeRepository);
+
+        var createdProduct = productService.CreateProductService(
+            CreateProductDto());
+
+        var originalDescription = createdProduct.Description;
+        var originalPrice = createdProduct.Price;
+        var originalCategory = createdProduct.Category;
+        var originalBrandName = createdProduct.Details.BrandName;
+        var originalWeightOrVolume =
+            createdProduct.Details.WeightOrVolume;
+        var originalMeasureType =
+            createdProduct.Details.MeasureType;
+
+        var updateDto = new UpdateProductDTO
+        {
+            Name = "Only Name Updated"
+        };
+
+        // Act
+        var result = productService.UpdateProductService(
+            createdProduct.Id,
+            updateDto);
+
+        // Assert
+        Assert.True(result);
+
+        var updatedProduct = productService.GetProductService(
+            createdProduct.Id);
+
+        Assert.Equal("Only Name Updated", updatedProduct.Name);
         Assert.Equal(
-            79.99m,
-            updatedProduct.Price);
+            originalDescription,
+            updatedProduct.Description);
+        Assert.Equal(originalPrice, updatedProduct.Price);
+        Assert.Equal(originalCategory, updatedProduct.Category);
+        Assert.Equal(
+            originalBrandName,
+            updatedProduct.Details.BrandName);
+        Assert.Equal(
+            originalWeightOrVolume,
+            updatedProduct.Details.WeightOrVolume);
+        Assert.Equal(
+            originalMeasureType,
+            updatedProduct.Details.MeasureType);
+    }
+
+    [Fact]
+    public void UpdateProduct_WithNullDto_ShouldThrowException()
+    {
+        // Arrange
+        var fakeRepository = new Fakes.FakeProductRepository();
+        var productService = new ProductService(fakeRepository);
+
+        var createdProduct = productService.CreateProductService(
+            CreateProductDto());
+
+        // Act
+        var exception = Assert.Throws<ArgumentNullException>(() =>
+            productService.UpdateProductService(
+                createdProduct.Id,
+                null!));
+
+        // Assert
+        Assert.Equal(
+            "productDTO",
+            exception.ParamName);
     }
 
     [Fact]
@@ -159,11 +217,9 @@ public class ProductServiceTests
 
         // Act
         var exception = Assert.Throws<KeyNotFoundException>(() =>
-        {
             productService.UpdateProductService(
                 nonExistingId,
-                updateDto);
-        });
+                updateDto));
 
         // Assert
         Assert.Equal(
@@ -178,24 +234,20 @@ public class ProductServiceTests
         var fakeRepository = new Fakes.FakeProductRepository();
         var productService = new ProductService(fakeRepository);
 
-        var addResult =
-            productService.CreateProductService(
-                CreateProductDto());
-
-        var productId = addResult.Id;
+        var createdProduct = productService.CreateProductService(
+            CreateProductDto());
 
         // Act
-        var result =
-            productService.DeleteProductService(productId);
+        var result = productService.DeleteProductService(
+            createdProduct.Id);
 
         // Assert
         Assert.True(result);
         Assert.Empty(fakeRepository.AllProducts);
 
         Assert.Throws<KeyNotFoundException>(() =>
-        {
-            productService.GetProductService(productId);
-        });
+            productService.GetProductService(
+                createdProduct.Id));
     }
 
     [Fact]
@@ -208,9 +260,7 @@ public class ProductServiceTests
 
         // Act
         var exception = Assert.Throws<KeyNotFoundException>(() =>
-        {
-            productService.DeleteProductService(nonExistingId);
-        });
+            productService.DeleteProductService(nonExistingId));
 
         // Assert
         Assert.Equal(
@@ -219,8 +269,7 @@ public class ProductServiceTests
     }
 
     private static CreateProductDTO CreateProductDto(
-        string name = "Test Product",
-        int stockQuantity = 100)
+        string name = "Test Product")
     {
         return new CreateProductDTO
         {
@@ -230,7 +279,7 @@ public class ProductServiceTests
             Category = ProductCategory.Salgados,
             BrandName = "Test Brand",
             WeightOrVolume = 1.5m,
-            MeasureType = MeasureType.Kilogram,
+            MeasureType = MeasureType.Kilogram
         };
     }
 }

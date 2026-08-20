@@ -7,11 +7,12 @@ public class FakeProductRepository : IProductRepository
 {
     private readonly List<Product> _products = new();
 
-    public IReadOnlyList<Product> AllProducts => _products.AsReadOnly();
+    public IReadOnlyList<Product> AllProducts =>
+        _products.AsReadOnly();
 
     public bool AddToRepository(Product product)
     {
-        if (product == null) return false;
+        ArgumentNullException.ThrowIfNull(product);
 
         _products.Add(product);
 
@@ -20,7 +21,8 @@ public class FakeProductRepository : IProductRepository
 
     public Product? GetProductById(Guid id)
     {
-        return _products.FirstOrDefault(p => p.Id == id);
+        return _products.FirstOrDefault(product =>
+            product.Id == id);
     }
 
     public Product? GetProductBySKU(string sku)
@@ -30,34 +32,25 @@ public class FakeProductRepository : IProductRepository
 
         var normalizedSku = sku.Trim().ToUpperInvariant();
 
-        return _products.FirstOrDefault(p => p.SKU == normalizedSku);
+        return _products.FirstOrDefault(product =>
+            product.SKU == normalizedSku);
     }
 
     public bool RemoveFromRepository(Product product)
     {
-        if (product == null) return false;
+        if (product is null)
+            return false;
 
         return _products.Remove(product);
     }
 
     public bool UpdateInRepository(Product product)
     {
-        if (product == null)
+        if (product is null)
             return false;
 
         var existingProduct = GetProductById(product.Id);
 
-        if (existingProduct == null)
-            return false;
-
-        existingProduct.Update(
-            product.Name,
-            product.Description,
-            product.Price,
-            product.Category,
-            product.Details,
-            product.LastUpdateAt);
-
-        return true;
+        return existingProduct is not null;
     }
 }

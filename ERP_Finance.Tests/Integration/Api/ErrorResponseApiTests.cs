@@ -1,4 +1,6 @@
-﻿using ERP_Finance.Tests.Integration.Infrastructure;
+﻿using ERP_Finance.DTOs.Product;
+using ERP_Finance.Tests.Integration.Infrastructure;
+using ERP_Finance.Types;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -49,16 +51,15 @@ public class ErrorResponseApiTests
         // Arrange
         var nonExistingId = Guid.NewGuid();
 
-        var updateDto = new
+        var updateDto = new UpdateProductDTO
         {
             Name = "Updated Product",
             Description = "Updated description.",
             Price = 100m,
-            Category = 0,
+            Category = ProductCategory.Salgados,
             BrandName = "Updated Brand",
             WeightOrVolume = 1.0m,
-            MeasureType = 0,
-            StockQuantity = 100
+            MeasureType = MeasureType.Kilogram
         };
 
         // Act

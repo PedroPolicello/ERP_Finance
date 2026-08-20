@@ -6,52 +6,124 @@ using ERP_Finance.Types;
 
 namespace ERP_Finance.Tests.Integration.Api;
 
-public class ProductValidationApiTests : IClassFixture<CustomWebApplicationFactory>
+public class ProductValidationApiTests
+    : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;
 
-    public ProductValidationApiTests(CustomWebApplicationFactory factory)
+    public ProductValidationApiTests(
+        CustomWebApplicationFactory factory)
     {
         _client = factory.CreateClient();
     }
 
-    //[Fact]
-    //public async Task PostProduct_WithEmptySku_ShouldReturnBadRequest()
-    //{
-    //    // Arrange
-    //    var productDto = CreateProductDto();
+    [Fact]
+    public async Task PostProduct_WithEmptyName_ShouldReturnBadRequest()
+    {
+        // Arrange
+        var productDto = CreateProductDto();
+        productDto.Name = string.Empty;
 
-    //    productDto.SKU = string.Empty;
+        // Act
+        var response = await _client.PostAsJsonAsync(
+            "/api/Product",
+            productDto);
 
-    //    // Act
-    //    var response = await _client.PostAsJsonAsync(
-    //        "/api/Product",
-    //        productDto);
+        // Assert
+        Assert.Equal(
+            HttpStatusCode.BadRequest,
+            response.StatusCode);
+    }
 
-    //    // Assert
-    //    Assert.Equal(
-    //        HttpStatusCode.BadRequest,
-    //        response.StatusCode);
-    //}
+    [Fact]
+    public async Task PostProduct_WithEmptyDescription_ShouldReturnBadRequest()
+    {
+        // Arrange
+        var productDto = CreateProductDto();
+        productDto.Description = string.Empty;
 
-    //[Fact]
-    //public async Task PostProduct_WithInvalidSkuLength_ShouldReturnBadRequest()
-    //{
-    //    // Arrange
-    //    var productDto = CreateProductDto();
+        // Act
+        var response = await _client.PostAsJsonAsync(
+            "/api/Product",
+            productDto);
 
-    //    productDto.SKU = "AB";
+        // Assert
+        Assert.Equal(
+            HttpStatusCode.BadRequest,
+            response.StatusCode);
+    }
 
-    //    // Act
-    //    var response = await _client.PostAsJsonAsync(
-    //        "/api/Product",
-    //        productDto);
+    [Fact]
+    public async Task PostProduct_WithZeroPrice_ShouldReturnBadRequest()
+    {
+        // Arrange
+        var productDto = CreateProductDto();
+        productDto.Price = 0;
 
-    //    // Assert
-    //    Assert.Equal(
-    //        HttpStatusCode.BadRequest,
-    //        response.StatusCode);
-    //}
+        // Act
+        var response = await _client.PostAsJsonAsync(
+            "/api/Product",
+            productDto);
+
+        // Assert
+        Assert.Equal(
+            HttpStatusCode.BadRequest,
+            response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PostProduct_WithZeroWeightOrVolume_ShouldReturnBadRequest()
+    {
+        // Arrange
+        var productDto = CreateProductDto();
+        productDto.WeightOrVolume = 0;
+
+        // Act
+        var response = await _client.PostAsJsonAsync(
+            "/api/Product",
+            productDto);
+
+        // Assert
+        Assert.Equal(
+            HttpStatusCode.BadRequest,
+            response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PostProduct_WithInvalidCategory_ShouldReturnBadRequest()
+    {
+        // Arrange
+        var productDto = CreateProductDto();
+        productDto.Category = (ProductCategory)999;
+
+        // Act
+        var response = await _client.PostAsJsonAsync(
+            "/api/Product",
+            productDto);
+
+        // Assert
+        Assert.Equal(
+            HttpStatusCode.BadRequest,
+            response.StatusCode);
+    }
+
+    [Fact]
+    public async Task PostProduct_WithInvalidMeasureType_ShouldReturnBadRequest()
+    {
+        // Arrange
+        var productDto = CreateProductDto();
+        productDto.MeasureType = (MeasureType)999;
+
+        // Act
+        var response = await _client.PostAsJsonAsync(
+            "/api/Product",
+            productDto);
+
+        // Assert
+        Assert.Equal(
+            HttpStatusCode.BadRequest,
+            response.StatusCode);
+    }
 
     private static CreateProductDTO CreateProductDto()
     {
@@ -63,7 +135,7 @@ public class ProductValidationApiTests : IClassFixture<CustomWebApplicationFacto
             Category = ProductCategory.Salgados,
             BrandName = "Test Brand",
             WeightOrVolume = 1.5m,
-            MeasureType = MeasureType.Kilogram,
+            MeasureType = MeasureType.Kilogram
         };
     }
 }
