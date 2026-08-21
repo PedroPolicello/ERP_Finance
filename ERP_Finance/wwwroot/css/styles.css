@@ -223,14 +223,18 @@ button {
         transform: translateY(0);
     }
 
-/* Botão secundário de cancelamento. */
+/*
+    Botão Cancelar.
+    A cor vermelha indica que a ação interrompe a edição atual.
+*/
 #cancel-btn {
-    background-color: #6b7280;
+    color: #ffffff;
+    background-color: #dc2626;
 }
 
-    /* Hover do botão de cancelamento. */
+    /* Vermelho mais escuro ao passar o mouse sobre Cancelar. */
     #cancel-btn:hover {
-        background-color: #4b5563;
+        background-color: #b91c1c;
     }
 
 /* Área de mensagens do formulário. */
@@ -365,34 +369,74 @@ button {
 }
 
 /*
-    Área que contém o botão no card.
-    O botão ficará à direita e centralizado verticalmente
-    em relação ao grid de informações.
+    Área que contém os botões do card.
+    Os botões ficarão empilhados verticalmente,
+    facilitando a leitura e a utilização.
 */
 .product-card-actions {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
+
+    /*
+    Define um tamanho consistente para os botões
+    Editar e Excluir dentro dos cards.
+    */
+    .product-card-actions button {
+        width: 100%;
+        min-width: 84px;
+        padding: 10px 16px;
+        font-size: 1rem;
+    }
+
+/*
+    Botão usado para iniciar a edição do produto.
+    A cor azul diferencia a edição da ação destrutiva.
+*/
+.edit-button {
+    color: #ffffff;
+    background-color: #2563eb;
+}
+
+    /* Azul mais escuro ao passar o mouse sobre Editar. */
+    .edit-button:hover {
+        background-color: #1d4ed8;
+    }
+
+/*
+    No modo de edição, o botão principal usa azul
+    para manter o padrão visual do botão Editar.
+*/
+#submit-btn {
+    background-color: #087f23;
 }
 
 /*
-    Botão de exclusão usado tanto no card quanto no modal.
-    A classe é compartilhada para manter a ação destrutiva
-    sempre com o mesmo significado visual.
+    Quando o formulário está no modo de edição,
+    o JavaScript adiciona a classe edit-mode ao formulário.
 */
-.delete-button {
-    padding: 10px 16px;
-    color: #ffffff;
-    font: inherit;
-    font-weight: 600;
-    font-size: 1.1rem;
-    background-color: #dc2626;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+#product-form.edit-mode #submit-btn {
+    background-color: #2563eb;
 }
 
-    /* Cor mais escura ao passar o mouse sobre Excluir. */
+    /* Azul mais escuro ao passar o mouse sobre Salvar. */
+    #product-form.edit-mode #submit-btn:hover {
+        background-color: #1d4ed8;
+    }
+
+/*
+    Botão de exclusão usado no card e no modal.
+    A cor vermelha aparece sempre, mesmo sem hover.
+*/
+.delete-button {
+    color: #ffffff;
+    background-color: #dc2626;
+    font-size: 1rem;
+}
+
+    /* Vermelho mais escuro ao passar o mouse sobre Excluir. */
     .delete-button:hover {
         background-color: #b91c1c;
         transform: translateY(-1px);
@@ -496,11 +540,11 @@ button {
     }
 
     .product-card-actions {
+        align-items: stretch;
         justify-content: flex-start;
     }
 
     .measurement-fields {
         grid-template-columns: 1fr;
     }
-}
 }

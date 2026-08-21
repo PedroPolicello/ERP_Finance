@@ -7,11 +7,19 @@ const productsList = document.getElementById("products-list");
 const refreshButton = document.getElementById("refresh-btn");
 const formMessage = document.getElementById("form-message");
 
+// Elementos usados para controlar o modo de criação e edição.
+const productIdInput = document.getElementById("product-id");
+const formTitle = document.getElementById("form-title");
+const submitButton = document.getElementById("submit-btn");
+const cancelButton = document.getElementById("cancel-btn");
+
 // Campos atuais do formulário.
 // SKU e quantidade de estoque não existem mais no frontend.
 const nameInput = document.getElementById("name");
+
 // Área abaixo do campo Nome onde os produtos semelhantes serão exibidos.
 const similarProductsContainer = document.getElementById("similar-products");
+
 const descriptionInput = document.getElementById("description");
 const priceInput = document.getElementById("price");
 const categoryInput = document.getElementById("category");
@@ -62,17 +70,22 @@ document.addEventListener("DOMContentLoaded", () => {
     loadProducts();
     updateMeasurementField();
 });
+
 // Atualiza a lista manualmente.
 refreshButton.addEventListener("click", loadProducts);
 
-// Envia o formulário para criar um produto.
-productForm.addEventListener("submit", createProduct);
+// Envia o formulário.
+// A função decidirá entre POST e PATCH conforme o modo atual.
+productForm.addEventListener("submit", submitProductForm);
 
 // Busca produtos com nomes semelhantes enquanto a pessoa digita.
 nameInput.addEventListener("input", handleSimilarProductsSearch);
 
 // Ajusta o campo de valor conforme a medida selecionada.
 measureTypeInput.addEventListener("change", updateMeasurementField);
+
+// Cancela o modo de edição e retorna ao modo de criação.
+cancelButton.addEventListener("click", cancelEdit);
 
 // Fecha o modal sem excluir.
 cancelDeleteButton.addEventListener("click", closeDeleteConfirmationDialog);
@@ -107,11 +120,20 @@ function updateMeasurementField() {
     if (measureType === 0) {
         /*
             Unidade sempre equivale a 1.
-            O campo fica bloqueado para evitar valores como 2,5 Unidades.
+
+            O campo fica bloqueado para evitar valores como
+            2,5 Unidades.
         */
         weightOrVolumeLabel.textContent = "Unidade";
         weightOrVolumeInput.value = 1;
         weightOrVolumeInput.disabled = true;
+
+        /*
+            Como o campo está desabilitado, ele não participa da validação
+            nativa do formulário. O valor 1 será adicionado ao payload
+            pelo JavaScript.
+        */
+        weightOrVolumeInput.required = false;
 
         return;
     }
@@ -137,6 +159,7 @@ function updateMeasurementField() {
     weightOrVolumeLabel.textContent = "Peso ou Volume";
 }
 
+
 /**
  * Controla a busca de produtos semelhantes enquanto o nome é digitado.
  *
@@ -149,6 +172,15 @@ function handleSimilarProductsSearch() {
 
     // Cancela o timer da digitação anterior, se existir.
     clearTimeout(similarProductsDebounceTimer);
+
+    /*
+        Durante a edição, não precisamos mostrar produtos semelhantes,
+        pois o formulário já está carregando um produto existente.
+    */
+    if (productIdInput.value) {
+        clearSimilarProducts();
+        return;
+    }
 
     /*
         Se houver menos de 3 caracteres, não pesquisamos.
@@ -164,6 +196,7 @@ function handleSimilarProductsSearch() {
         searchSimilarProducts(typedName);
     }, 350);
 }
+
 
 /**
  * Consulta o endpoint de busca por nomes semelhantes.
@@ -219,6 +252,7 @@ async function searchSimilarProducts(name) {
     }
 }
 
+
 /**
  * Desenha a lista de produtos semelhantes abaixo do campo Nome.
  *
@@ -250,12 +284,14 @@ function renderSimilarProducts(products) {
     `;
 }
 
+
 /**
  * Limpa e oculta a área de produtos semelhantes.
  */
 function clearSimilarProducts() {
     similarProductsContainer.innerHTML = "";
 }
+
 
 /**
  * Busca todos os produtos.
@@ -284,13 +320,16 @@ async function loadProducts() {
     }
 }
 
+
 /**
- * Cria um produto.
+ * Envia o formulário para criar ou editar um produto.
  *
- * Endpoint:
- * POST /api/Product
+ * O comportamento depende do campo oculto product-id:
+ *
+ * - Sem ID: POST /api/Product
+ * - Com ID: PATCH /api/Product/{id}
  */
-async function createProduct(event) {
+async function submitProductForm(event) {
     event.preventDefault();
 
     clearFormMessage();
@@ -315,16 +354,18 @@ async function createProduct(event) {
             "Nome, descrição e marca não podem conter apenas espaços.",
             "error"
         );
+
         return;
     }
 
     /*
-        O payload segue o CreateProductDTO atual.
+        O payload segue tanto o CreateProductDTO quanto o UpdateProductDTO.
 
         Não enviamos:
-        - sku: o backend gera automaticamente.
+        - sku: o backend gera automaticamente na criação.
+        - id: o ID fica somente na URL do PATCH.
         - stockQuantity: estoque não existe mais.
-        - details: o DTO de criação é plano.
+        - details: o DTO atual é plano.
     */
     const productData = {
         name: name,
@@ -336,11 +377,32 @@ async function createProduct(event) {
         measureType: Number(measureTypeInput.value)
     };
 
-    try {
-        setSubmitButtonState(true, "Criando produto...");
+    /*
+        O campo oculto fica vazio no modo de criação.
+        Durante a edição, ele contém o Guid do produto.
+    */
+    const productId = productIdInput.value.trim();
+    const isEditing = Boolean(productId);
 
-        const response = await fetch(productApiUrl, {
-            method: "POST",
+    const requestUrl = isEditing
+        ? `${productApiUrl}/${encodeURIComponent(productId)}`
+        : productApiUrl;
+
+    const requestMethod = isEditing ? "PATCH" : "POST";
+
+    const loadingMessage = isEditing
+        ? "Atualizando produto..."
+        : "Criando produto...";
+
+    const successMessage = isEditing
+        ? "Produto atualizado com sucesso."
+        : "Produto criado com sucesso.";
+
+    try {
+        setSubmitButtonState(true, loadingMessage);
+
+        const response = await fetch(requestUrl, {
+            method: requestMethod,
             headers: {
                 "Content-Type": "application/json"
             },
@@ -353,10 +415,13 @@ async function createProduct(event) {
             throw new Error(errorMessage);
         }
 
-        // O backend gera SKU, ID e datas; a lista é recarregada para mostrar o retorno.
-        productForm.reset();
+        /*
+            Depois de criar ou editar, limpamos o formulário e retornamos
+            ao modo de criação.
+        */
+        resetProductForm();
 
-        showFormMessage("Produto criado com sucesso.", "success");
+        showFormMessage(successMessage, "success");
 
         await loadProducts();
     } catch (error) {
@@ -364,9 +429,123 @@ async function createProduct(event) {
 
         showFormMessage(error.message, "error");
     } finally {
-        setSubmitButtonState(false, "Criar Produto");
+        setSubmitButtonState(false);
     }
 }
+
+
+/**
+ * Preenche o formulário com os dados de um produto existente.
+ *
+ * O produto vem do retorno atual de GET /api/Product, portanto:
+ *
+ * - Os dados principais estão diretamente em product.
+ * - Marca, peso/volume e medida estão em product.details.
+ * - O SKU não é colocado no formulário porque é imutável.
+ *
+ * @param {object} product Produto selecionado para edição.
+ */
+function editProduct(product) {
+    /*
+        Guardamos o ID somente no input hidden.
+        Ele será usado na URL do PATCH.
+    */
+    productIdInput.value = product.id;
+
+    // Preenche os campos principais retornados pelo backend.
+    nameInput.value = product.name ?? "";
+    descriptionInput.value = product.description ?? "";
+    priceInput.value = product.price ?? "";
+    categoryInput.value = String(product.category ?? "");
+
+    /*
+        O retorno GET organiza os dados complementares dentro de details.
+    */
+    brandNameInput.value = product.details?.brandName ?? "";
+    weightOrVolumeInput.value =
+        product.details?.weightOrVolume ?? "";
+    measureTypeInput.value =
+        String(product.details?.measureType ?? "");
+
+    // Atualiza visualmente o formulário para o modo de edição.
+    formTitle.textContent = "Editar Produto";
+    productForm.classList.add("edit-mode");
+    submitButton.textContent = "Salvar";
+    cancelButton.style.display = "inline-block";
+
+    /*
+        Durante a edição, limpamos a área de produtos semelhantes
+        para não confundir a edição com um novo cadastro.
+    */
+    clearSimilarProducts();
+    clearFormMessage();
+
+    /*
+        É importante chamar esta função depois de definir measureType.
+        Assim, Un volta a bloquear o valor e define 1 automaticamente.
+    */
+    updateMeasurementField();
+
+    // Facilita o início da alteração pelo usuário.
+    nameInput.focus();
+}
+
+
+/**
+ * Cancela a edição atual.
+ *
+ * Nenhuma requisição é enviada ao backend.
+ */
+function cancelEdit() {
+    resetProductForm();
+    clearFormMessage();
+}
+
+
+/**
+ * Retorna o formulário ao estado inicial de criação.
+ */
+function resetProductForm() {
+    // Limpa todos os campos visíveis e o campo hidden.
+    productForm.reset();
+    productForm.classList.remove("edit-mode");
+    productIdInput.value = "";
+
+    // Restaura os textos e botões do modo de criação.
+    formTitle.textContent = "Novo Produto";
+    submitButton.textContent = "Criar Produto";
+    cancelButton.style.display = "none";
+
+    // Limpa resultados antigos e ajusta novamente o campo de medida.
+    clearSimilarProducts();
+    updateMeasurementField();
+}
+
+
+/**
+ * Ativa ou desativa o botão principal do formulário.
+ *
+ * @param {boolean} isLoading Indica se existe uma requisição em andamento.
+ * @param {string} loadingText Texto apresentado enquanto a API processa a ação.
+ */
+function setSubmitButtonState(isLoading, loadingText) {
+    submitButton.disabled = isLoading;
+
+    if (isLoading) {
+        submitButton.textContent = loadingText;
+        return;
+    }
+
+    /*
+        Depois do carregamento, o texto depende do modo atual.
+        Normalmente resetProductForm já terá retornado ao modo de criação
+        após uma operação bem-sucedida.
+    */
+    submitButton.textContent = productIdInput.value
+        ? "Salvar"
+        : "Criar Produto";
+}
+
 
 /**
  * Abre o modal e guarda qual produto poderá ser excluído.
@@ -386,6 +565,7 @@ function deleteProduct(productId, productName) {
     deleteConfirmationDialog.showModal();
 }
 
+
 /**
  * Fecha o modal e limpa o produto pendente.
  */
@@ -394,6 +574,7 @@ function closeDeleteConfirmationDialog() {
 
     productPendingDeletion = null;
 }
+
 
 /**
  * Executa DELETE após a confirmação.
@@ -436,30 +617,18 @@ async function confirmDeleteProductDeletion() {
     }
 }
 
-/**
- * Ativa ou desativa o botão principal do formulário.
- *
- * @param {boolean} isLoading Indica se existe uma requisição em andamento.
- * @param {string} loadingText Texto apresentado enquanto a API processa a ação.
- */
-function setSubmitButtonState(isLoading, loadingText) {
-    const submitButton = document.getElementById("submit-btn");
-
-    submitButton.disabled = isLoading;
-    submitButton.textContent = isLoading
-        ? loadingText
-        : "Criar Produto";
-}
 
 /**
- * Altera o botão Excluir que fica dentro do modal.
+ * Altera o estado do botão Excluir que fica dentro do modal.
  */
 function setDeleteButtonState(isLoading) {
     confirmDeleteButton.disabled = isLoading;
+
     confirmDeleteButton.textContent = isLoading
         ? "Excluindo..."
         : "Excluir";
 }
+
 
 /**
  * Mostra uma mensagem abaixo do formulário.
@@ -469,6 +638,7 @@ function showFormMessage(message, type) {
     formMessage.className = `message ${type}-message`;
 }
 
+
 /**
  * Limpa uma mensagem anterior do formulário.
  */
@@ -476,6 +646,7 @@ function clearFormMessage() {
     formMessage.textContent = "";
     formMessage.className = "message";
 }
+
 
 /**
  * Lê a resposta de erro do backend e tenta extrair a mensagem mais útil.
@@ -511,6 +682,7 @@ async function getApiErrorMessage(response) {
     }
 }
 
+
 /**
  * Desenha os cards usando o JSON atual retornado por GET /api/Product.
  *
@@ -539,27 +711,38 @@ function renderProducts(products) {
                 Assim, por exemplo, o número 0 não seria trocado indevidamente.
             */
             const brandName = product.details?.brandName ?? "Não informado";
-            const weightOrVolume = product.details?.weightOrVolume ?? "Não informado";
-            const measureType = getMeasureTypeName(product.details?.measureType);
-            const measurementLabel = getMeasurementLabel(product.details?.measureType);
+            const weightOrVolume =
+                product.details?.weightOrVolume ?? "Não informado";
+
+            const measureType =
+                getMeasureTypeName(product.details?.measureType);
+
+            const measurementLabel =
+                getMeasurementLabel(product.details?.measureType);
 
             const formattedPrice = formatCurrency(product.price);
             const categoryName = getCategoryName(product.category);
-            const productId = encodeURIComponent(product.id);
 
             return `
                 <article class="product-card">
                     <div class="product-card-header">
                         <div>
                             <h3>${escapeHtml(product.name)}</h3>
-                            <span class="product-sku">SKU: ${escapeHtml(product.sku)}</span>
+
+                            <span class="product-sku">
+                                SKU: ${escapeHtml(product.sku)}
+                            </span>
                         </div>
 
-                        <strong class="product-price">${formattedPrice}</strong>
+                        <strong class="product-price">
+                            ${formattedPrice}
+                        </strong>
                     </div>
 
                     <p class="product-description">
-                        ${escapeHtml(product.description || "Sem descrição cadastrada.")}
+                        ${escapeHtml(
+                product.description || "Sem descrição cadastrada."
+            )}
                     </p>
 
                     <div class="product-card-details">
@@ -576,15 +759,33 @@ function renderProducts(products) {
 
                             <div>
                                 <dt>${measurementLabel}</dt>
-                                <dd>${escapeHtml(String(weightOrVolume))} ${measureType}</dd>
+                                <dd>
+                                    ${escapeHtml(String(weightOrVolume))}
+                                    ${measureType}
+                                </dd>
                             </div>
                         </dl>
 
                         <div class="product-card-actions">
+                            <!--
+                                O ID fica em data-product-id apenas para
+                                identificar o produto no botão de edição.
+                            -->
+                            <button
+                                type="button"
+                                class="edit-button"
+                                data-product-id="${escapeHtml(product.id)}">
+                                Editar
+                            </button>
+
+                            <!--
+                                O botão não exclui imediatamente.
+                                Ele apenas abre o modal de confirmação.
+                            -->
                             <button
                                 type="button"
                                 class="delete-button"
-                                data-product-id="${productId}"
+                                data-product-id="${encodeURIComponent(product.id)}"
                                 data-product-name="${escapeHtml(product.name)}">
                                 Excluir
                             </button>
@@ -594,6 +795,23 @@ function renderProducts(products) {
             `;
         })
         .join("");
+
+    /*
+        Como os cards foram criados com innerHTML,
+        os eventos precisam ser registrados depois da renderização.
+    */
+
+    const editButtons = document.querySelectorAll(".edit-button");
+
+    editButtons.forEach((button, index) => {
+        button.addEventListener("click", () => {
+            /*
+                O índice do botão corresponde ao índice do produto
+                no array usado para montar os cards.
+            */
+            editProduct(products[index]);
+        });
+    });
 
     const deleteButtons = document.querySelectorAll(".delete-button");
 
@@ -606,6 +824,7 @@ function renderProducts(products) {
         });
     });
 }
+
 
 /**
  * Converte o número de ProductCategory para texto.
@@ -621,6 +840,7 @@ function getCategoryName(category) {
 
     return categories[category] ?? "Não informada";
 }
+
 
 /**
  * Define o título mostrado no card conforme o MeasureType.
@@ -646,6 +866,7 @@ function getMeasurementLabel(measureType) {
     return measurementLabels[measureType] ?? "Medida";
 }
 
+
 /**
  * Converte o número de MeasureType para texto.
  */
@@ -661,6 +882,7 @@ function getMeasureTypeName(measureType) {
     return measureTypes[measureType] ?? "";
 }
 
+
 /**
  * Formata um preço para Real brasileiro.
  */
@@ -671,11 +893,16 @@ function formatCurrency(value) {
     }).format(value);
 }
 
+
 /**
  * Escapa texto antes de inseri-lo por innerHTML.
+ *
+ * Isso evita que valores vindos da API sejam interpretados
+ * como HTML dentro dos cards.
  */
 function escapeHtml(value) {
     const temporaryElement = document.createElement("div");
+
     temporaryElement.textContent = value ?? "";
 
     return temporaryElement.innerHTML;
