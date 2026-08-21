@@ -1,0 +1,506 @@
+﻿/* Faz com que padding e bordas sejam incluídos no tamanho total dos elementos. */
+* {
+    box-sizing: border-box;
+}
+
+/* Aparência geral da página. */
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f7fb;
+    color: #1f2937;
+}
+
+/* Centraliza o conteúdo e limita sua largura máxima. */
+.container {
+    width: min(1100px, 100% - 32px);
+    margin: 0 auto;
+    padding: 32px 0 48px;
+}
+
+/* Espaçamento abaixo do cabeçalho. */
+header {
+    margin-bottom: 24px;
+}
+
+/* Título principal. */
+h1 {
+    margin: 0;
+    color: #087f23;
+    font-size: 2rem;
+}
+
+/* Organiza o formulário e a listagem em duas colunas. */
+main {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 24px;
+    align-items: start;
+}
+
+/* Aparência das áreas principais. */
+.form-section,
+.list-section {
+    padding: 24px;
+    background-color: #ffffff;
+    border: 1px solid #dbe3ef;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(31, 41, 55, 0.08);
+}
+
+/* Títulos das seções. */
+h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #1f2937;
+    font-size: 1.3rem;
+}
+
+/* Espaçamento entre os campos. */
+.form-group {
+    margin-bottom: 16px;
+}
+
+/*
+    Mantém o valor e o tipo de medida lado a lado,
+    pois eles formam uma única informação do produto.
+*/
+.measurement-fields {
+    display: grid;
+    grid-template-columns: 1fr 0.8fr;
+    gap: 12px;
+}
+
+    /*
+    A margem inferior já fica no agrupamento.
+    Assim evitamos espaço duplicado ao lado dos dois campos.
+*/
+    .measurement-fields .form-group {
+        margin-bottom: 16px;
+    }
+
+/*
+    Área preenchida pelo JavaScript quando existem produtos
+    com nomes semelhantes ao que está sendo digitado.
+*/
+.similar-products {
+    margin-top: 10px;
+}
+
+/* Título de aviso acima da lista. */
+.similar-products-title {
+    margin: 0 0 8px;
+    color: #92400e;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/*
+    Lista sem marcadores padrão do navegador.
+    Cada produto semelhante terá seu próprio bloco visual.
+*/
+.similar-products-list {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+    /* Produto semelhante individual. */
+    .similar-products-list li {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 8px 10px;
+        background-color: #fffbeb;
+        border: 1px solid #fde68a;
+        border-left: 3px solid #f59e0b;
+        border-radius: 6px;
+    }
+
+    /* Nome do produto semelhante. */
+    .similar-products-list strong {
+        color: #78350f;
+        font-size: 0.86rem;
+    }
+
+    /* SKU mostrado apenas para ajudar a identificar o produto existente. */
+    .similar-products-list span {
+        color: #92400e;
+        font-size: 0.76rem;
+    }
+
+/* Rótulos dos campos. */
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+/* Estilo dos campos de entrada e dos dropdowns. */
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 10px 12px;
+    font: inherit;
+    color: inherit;
+    background-color: #ffffff;
+    border: 1px solid #b8c3d1;
+    border-radius: 6px;
+}
+
+    /* Destaque do campo selecionado. */
+    input:focus,
+    textarea:focus,
+    select:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+    }
+
+/* Permite redimensionar a descrição verticalmente. */
+textarea {
+    resize: vertical;
+}
+
+/* Mantém o cursor de seleção nos dropdowns. */
+select {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, #374151 50%), linear-gradient(135deg, #374151 50%, transparent 50%);
+    background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+    padding-right: 42px;
+}
+
+/*
+    Indica visualmente que o valor não pode ser alterado.
+    Isso acontece quando a medida selecionada é Unidade (Un),
+    pois o sistema define automaticamente o valor como 1.
+*/
+#weightOrVolume:disabled {
+    color: #475569;
+    background-color: #dbe3ef;
+    border-color: #94a3b8;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+/* Organização dos botões do formulário. */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+/* Estilo geral dos botões. */
+button {
+    padding: 10px 16px;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 600;
+    background-color: #087f23;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+    /* Efeito ao passar o mouse sobre os botões. */
+    button:hover {
+        background-color: #06651c;
+        transform: translateY(-1px);
+    }
+
+    /* Remove o deslocamento ao clicar. */
+    button:active {
+        transform: translateY(0);
+    }
+
+/* Botão secundário de cancelamento. */
+#cancel-btn {
+    background-color: #6b7280;
+}
+
+    /* Hover do botão de cancelamento. */
+    #cancel-btn:hover {
+        background-color: #4b5563;
+    }
+
+/* Área de mensagens do formulário. */
+.message {
+    min-height: 24px;
+    margin-top: 16px;
+    padding: 0;
+    border-radius: 6px;
+}
+
+/* Área onde os cards são inseridos. */
+#products-list {
+    display: grid;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+/* Card individual do produto. */
+.product-card {
+    padding: 15px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #dbe3ef;
+    border-left: 5px solid #087f23;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(31, 41, 55, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    /* Pequeno efeito ao passar o mouse sobre o card. */
+    .product-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(31, 41, 55, 0.12);
+    }
+
+/* Cabeçalho do card, com nome à esquerda e preço à direita. */
+.product-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+
+/* Nome do produto. */
+.product-card h3 {
+    margin: 0 0 0px;
+    color: #1f2937;
+    font-size: 1.5rem;
+}
+
+/* SKU do produto. */
+.product-sku {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+/* Exibe o SKU em maiúsculas enquanto a pessoa digita. */
+#sku {
+    text-transform: uppercase;
+}
+
+/* Preço destacado. */
+.product-price {
+    color: #087f23;
+    font-size: 1.8rem;
+    white-space: nowrap;
+}
+
+/* Descrição do produto. */
+.product-description {
+    margin: 0 0 3px;
+    color: #475569;
+    line-height: 1.5;
+}
+
+/* Grid dos dados complementares do produto. */
+.product-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 0;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+}
+
+    /* Cada bloco de informação. */
+    .product-info div {
+        min-width: 0;
+    }
+
+    /* Nome de cada informação. */
+    .product-info dt {
+        margin-bottom: 2px;
+        color: #64748b;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    /* Valor de cada informação. */
+    .product-info dd {
+        margin: 0;
+        color: #1f2937;
+        font-weight: 600;
+    }
+
+/* Mensagens de erro. */
+.error-message {
+    color: #b91c1c;
+}
+
+/* Mantém o JSON formatado, caso ele seja usado novamente. */
+.product-card pre {
+    margin: 0;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: Consolas, monospace;
+    font-size: 0.85rem;
+}
+
+/*
+    Organiza as informações do produto e o botão Excluir
+    na mesma área horizontal do card.
+*/
+.product-card-details {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: center;
+}
+
+/*
+    Área que contém o botão no card.
+    O botão ficará à direita e centralizado verticalmente
+    em relação ao grid de informações.
+*/
+.product-card-actions {
+    display: flex;
+    align-items: center;
+}
+
+/*
+    Botão de exclusão usado tanto no card quanto no modal.
+    A classe é compartilhada para manter a ação destrutiva
+    sempre com o mesmo significado visual.
+*/
+.delete-button {
+    padding: 10px 16px;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 600;
+    font-size: 1.1rem;
+    background-color: #dc2626;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+    /* Cor mais escura ao passar o mouse sobre Excluir. */
+    .delete-button:hover {
+        background-color: #b91c1c;
+        transform: translateY(-1px);
+    }
+
+    /* Remove o deslocamento enquanto o botão é pressionado. */
+    .delete-button:active {
+        transform: translateY(0);
+    }
+
+    /* Aparência quando o botão está desabilitado durante a exclusão. */
+    .delete-button:disabled {
+        background-color: #fca5a5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+/*
+    Remove bordas e fundo padrão do <dialog>.
+    O navegador mostrará o modal no centro da tela ao usar showModal().
+*/
+#delete-confirmation-dialog {
+    width: min(600px, calc(100% - 32px));
+    padding: 0;
+    color: #1f2937;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+}
+
+    /*
+    Fundo escuro semitransparente atrás do modal.
+    ::backdrop existe enquanto o dialog está aberto como modal.
+*/
+    #delete-confirmation-dialog::backdrop {
+        background-color: rgba(15, 23, 42, 0.55);
+    }
+
+/* Espaçamento interno do conteúdo do modal. */
+.dialog-content {
+    padding: 24px;
+}
+
+    /* Título da confirmação. */
+    .dialog-content h2 {
+        margin: 0 0 6px;
+        color: #991b1b;
+        font-size: 1.8rem;
+    }
+
+    /* Texto que contém o nome do produto a ser excluído. */
+    .dialog-content p {
+        margin: 0;
+        color: #191919;
+        line-height: 2;
+        font-size: 1.2rem;
+    }
+
+/* Posiciona os botões do modal no lado direito. */
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+/* Estilo específico do botão Cancelar do modal. */
+.secondary-button {
+    color: #1f2937;
+    background-color: #e2e8f0;
+    font-size: 1.1rem;
+}
+
+    /* Hover do botão Cancelar do modal. */
+    .secondary-button:hover {
+        background-color: #cbd5e1;
+    }
+
+/* Ajusta o layout em telas estreitas. */
+@media (max-width: 800px) {
+    main {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        width: min(100% - 24px, 1100px);
+        padding-top: 20px;
+    }
+
+    .product-card-header {
+        flex-direction: column;
+    }
+
+    .product-info {
+        grid-template-columns: 1fr;
+    }
+
+    .product-card-details {
+        grid-template-columns: 1fr;
+    }
+
+    .product-card-actions {
+        justify-content: flex-start;
+    }
+
+    .measurement-fields {
+        grid-template-columns: 1fr;
+    }
+}
+}

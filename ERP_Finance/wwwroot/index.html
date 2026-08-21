@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP Finance - Produtos</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ERP Finance - Produtos</h1>
+        </header>
+
+        <main>
+            <!-- Seção de formulário para criar/editar produto -->
+            <section class="form-section">
+                <h2 id="form-title">Novo Produto</h2>
+                <form id="product-form">
+                    <input type="hidden" id="product-id">
+
+                    <div class="form-group">
+                        <label for="name">Nome *</label>
+
+                        <input type="text"
+                               id="name"
+                               name="name"
+                               maxlength="50"
+                               required>
+
+                        <!--
+            Esta área começa vazia e escondida visualmente.
+            Depois, o JavaScript exibirá aqui os produtos com nomes semelhantes
+            retornados por GET /api/Product/search?name=...
+        -->
+                        <div id="similar-products"
+                             class="similar-products"
+                             aria-live="polite">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Descrição *</label>
+
+                        <!-- Descrição é obrigatória e pode ter no máximo 300 caracteres. -->
+                        <textarea id="description"
+                                  name="description"
+                                  rows="3"
+                                  maxlength="300"
+                                  required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price">Preço *</label>
+
+                        <!-- Preço é obrigatório, aceita centavos e deve ser maior ou igual a 0,01. -->
+                        <input type="number"
+                               id="price"
+                               name="price"
+                               step="0.01"
+                               min="0.01"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Categoria *</label>
+
+                        <!-- O value de cada option corresponde ao valor numérico do enum ProductCategory no backend. -->
+                        <select id="category" name="category" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="0">Salgados</option>
+                            <option value="1">Assados</option>
+                            <option value="2">Salgadinhos</option>
+                            <option value="3">Doces</option>
+                            <option value="4">Bebidas</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="brandName">Marca *</label>
+
+                        <!-- Marca é obrigatória e pode ter no máximo 100 caracteres. -->
+                        <input type="text"
+                               id="brandName"
+                               name="brandName"
+                               maxlength="100"
+                               required>
+                    </div>
+
+                    <!--
+                        Agrupa valor e tipo de medida porque os dois campos representam
+                        a mesma informação do produto.
+                    -->
+                    <div class="measurement-fields">
+                        <div class="form-group">
+                            <!-- O texto deste label mudará via JavaScript: Peso, Volume ou Unidade. -->
+                            <label id="weight-or-volume-label" for="weightOrVolume">
+                                Peso ou Volume *
+                            </label>
+
+                            <input type="number"
+                                   id="weightOrVolume"
+                                   name="weightOrVolume"
+                                   step="0.01"
+                                   min="0.01"
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="measureType">Medida *</label>
+
+                            <select id="measureType" name="measureType" required>
+                                <option value="">Selecione</option>
+                                <option value="0">Un</option>
+                                <option value="1">Kg</option>
+                                <option value="2">g</option>
+                                <option value="3">L</option>
+                                <option value="4">ml</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="submit-btn">Criar Produto</button>
+                        <button type="button" id="cancel-btn" style="display: none;">Cancelar</button>
+                    </div>
+                </form>
+
+                <div id="form-message" class="message"></div>
+            </section>
+
+            <!-- Seção de listagem de produtos -->
+            <section class="list-section">
+                <h2>Produtos Cadastrados</h2>
+                <button id="refresh-btn">Atualizar Lista</button>
+                <div id="products-list"></div>
+            </section>
+        </main>
+    </div>
+
+    <!--
+        Modal de confirmação para exclusão de produto.
+
+        <dialog> é um elemento HTML próprio para janelas modais.
+        Ele começa fechado e será aberto pelo JavaScript apenas
+        quando a pessoa clicar no botão "Excluir" de um produto.
+    -->
+    <dialog id="delete-confirmation-dialog">
+        <div class="dialog-content">
+            <h2>Excluir produto</h2>
+
+            <!-- Este texto será preenchido dinamicamente pelo JavaScript. -->
+            <p id="delete-confirmation-message"></p>
+
+            <div class="dialog-actions">
+                <!--
+                    type="button" impede que este botão envie o formulário
+                    principal de criação de produto.
+                -->
+                <button type="button"
+                        id="cancel-delete-button"
+                        class="secondary-button">
+                    Cancelar
+                </button>
+
+                <!--
+                    Este botão ainda não excluirá nada sozinho.
+                    O JavaScript adicionará o comportamento na próxima etapa.
+                -->
+                <button type="button"
+                        id="confirm-delete-button"
+                        class="delete-button">
+                    Excluir
+                </button>
+            </div>
+        </div>
+    </dialog>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
