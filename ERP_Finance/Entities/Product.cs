@@ -1,7 +1,7 @@
 ﻿using ERP_Finance.Types;
 using System.Text.RegularExpressions;
 
-namespace ERP_Finance.Models;
+namespace ERP_Finance.Entities;
 
 public class Product
 {
@@ -104,22 +104,6 @@ public class Product
 
         details.ValidateInfo(details.BrandName, details.WeightOrVolume, details.MeasureType);
     }
-
-    // OBSOLETO
-    //public bool HasSameInfo(Product other)
-    //{
-    //    ArgumentNullException.ThrowIfNull(other);
-
-    //    return SKU.Equals(other.SKU, StringComparison.OrdinalIgnoreCase)
-    //        && Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase)
-    //        && Description.Equals(other.Description, StringComparison.Ordinal)
-    //        && Price == other.Price
-    //        && Category == other.Category
-
-    //        && Details.BrandName.Equals(other.Details.BrandName, StringComparison.OrdinalIgnoreCase)
-    //        && Details.WeightOrVolume == other.Details.WeightOrVolume
-    //        && Details.MeasureType == other.Details.MeasureType;
-    //}
 }
 
 public class ProductDetails
@@ -168,6 +152,23 @@ public class ProductDetails
     }
 
 }
+
+
+// OBSOLETO
+//public bool HasSameInfo(Product other)
+//{
+//    ArgumentNullException.ThrowIfNull(other);
+
+//    return SKU.Equals(other.SKU, StringComparison.OrdinalIgnoreCase)
+//        && Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase)
+//        && Description.Equals(other.Description, StringComparison.Ordinal)
+//        && Price == other.Price
+//        && Category == other.Category
+
+//        && Details.BrandName.Equals(other.Details.BrandName, StringComparison.OrdinalIgnoreCase)
+//        && Details.WeightOrVolume == other.Details.WeightOrVolume
+//        && Details.MeasureType == other.Details.MeasureType;
+//}
 
 // OBSOLETO
 //public class ProductInventory

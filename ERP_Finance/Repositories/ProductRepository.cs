@@ -1,5 +1,5 @@
 ﻿using ERP_Finance.Data;
-using ERP_Finance.Models;
+using ERP_Finance.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERP_Finance.Repositories;

@@ -1,5 +1,5 @@
 ﻿using ERP_Finance.DTOs.Product;
-using ERP_Finance.Models;
+using ERP_Finance.Entities;
 using ERP_Finance.Service;
 using Microsoft.AspNetCore.Mvc;
 

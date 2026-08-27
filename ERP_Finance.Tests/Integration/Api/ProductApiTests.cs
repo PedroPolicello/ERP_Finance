@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using ERP_Finance.DTOs.Product;
 using ERP_Finance.Tests.Integration.Infrastructure;
 using ERP_Finance.Types;

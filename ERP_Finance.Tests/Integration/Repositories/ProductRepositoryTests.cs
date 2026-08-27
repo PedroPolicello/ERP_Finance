@@ -1,5 +1,5 @@
 ﻿using ERP_Finance.Data;
-using ERP_Finance.Models;
+using ERP_Finance.Entities;
 using ERP_Finance.Repositories;
 using ERP_Finance.Types;
 using Microsoft.Data.Sqlite;

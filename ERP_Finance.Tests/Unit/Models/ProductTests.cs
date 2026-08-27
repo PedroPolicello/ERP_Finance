@@ -1,4 +1,4 @@
-﻿using ERP_Finance.Models;
+﻿using ERP_Finance.Entities;
 using ERP_Finance.Types;
 
 namespace ERP_Finance.Tests.Unit.Models;

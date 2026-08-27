@@ -1,6 +1,6 @@
 ﻿using ERP_Finance.DTOs.Product;
 using ERP_Finance.Helpers;
-using ERP_Finance.Models;
+using ERP_Finance.Entities;
 using ERP_Finance.Repositories.Interfaces;
 
 namespace ERP_Finance.Service;

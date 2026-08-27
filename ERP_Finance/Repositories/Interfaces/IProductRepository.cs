@@ -1,4 +1,4 @@
-﻿using ERP_Finance.Models;
+﻿using ERP_Finance.Entities;
 
 namespace ERP_Finance.Repositories.Interfaces;
 

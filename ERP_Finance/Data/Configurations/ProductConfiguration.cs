@@ -1,4 +1,4 @@
-﻿using ERP_Finance.Models;
+﻿using ERP_Finance.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
