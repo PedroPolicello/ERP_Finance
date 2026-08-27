@@ -28,8 +28,7 @@ public class ProductTests
     [InlineData("ABC-DEF-GHI")]
     [InlineData("123 456 789")]
     [InlineData("123-456-78A")]
-    public void CreateProduct_WithInvalidSkuFormat_ShouldThrowException(
-        string sku)
+    public void CreateProduct_WithInvalidSkuFormat_ShouldThrowException(string sku)
     {
         // Arrange
         var action = () => CreateProduct(

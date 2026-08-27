@@ -1,4 +1,4 @@
-﻿using ERP_Finance.Models;
+﻿using ERP_Finance.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERP_Finance.Data;
@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Product> Products { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
