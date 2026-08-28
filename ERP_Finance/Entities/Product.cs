@@ -16,6 +16,9 @@ public class Product
     public DateTime CreatedAt { get; private set; }
     public DateTime LastUpdateAt { get; private set; }
 
+    private readonly List<OrderItem> _orderItems = [];
+    public IReadOnlyCollection<OrderItem> OrderItems => _orderItems;
+
     private Product()
     { }
 
