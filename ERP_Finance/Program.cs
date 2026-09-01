@@ -2,7 +2,7 @@ using ERP_Finance.Data;
 using Microsoft.EntityFrameworkCore;
 using ERP_Finance.Repositories;
 using ERP_Finance.Repositories.Interfaces;
-using ERP_Finance.Service;
+using ERP_Finance.Services;
 using ERP_Finance.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);

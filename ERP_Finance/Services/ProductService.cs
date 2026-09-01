@@ -3,7 +3,7 @@ using ERP_Finance.Helpers;
 using ERP_Finance.Entities;
 using ERP_Finance.Repositories.Interfaces;
 
-namespace ERP_Finance.Service;
+namespace ERP_Finance.Services;
 
 public class ProductService
 {

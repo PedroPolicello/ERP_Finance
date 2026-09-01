@@ -1,5 +1,5 @@
 ﻿using ERP_Finance.DTOs.Product;
-using ERP_Finance.Service;
+using ERP_Finance.Services;
 using ERP_Finance.Types;
 
 namespace ERP_Finance.Tests.Unit.Services;

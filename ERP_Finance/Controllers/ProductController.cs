@@ -1,6 +1,6 @@
 ﻿using ERP_Finance.DTOs.Product;
 using ERP_Finance.Entities;
-using ERP_Finance.Service;
+using ERP_Finance.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERP_Finance.Controllers;
