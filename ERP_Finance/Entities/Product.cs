@@ -19,7 +19,9 @@ public class Product
     private readonly List<OrderItem> _orderItems = [];
     public IReadOnlyCollection<OrderItem> OrderItems => _orderItems;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     private Product()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     { }
 
     public Product(string sku, string name, string description, decimal price, ProductCategory category, ProductDetails details, DateTime createdAt)

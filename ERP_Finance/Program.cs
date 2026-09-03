@@ -20,8 +20,11 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//Injeção de dependência para os repositórios e serviços
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+builder.Services.AddScoped<OrderItemService>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

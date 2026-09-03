@@ -7,8 +7,7 @@ public class FakeProductRepository : IProductRepository
 {
     private readonly List<Product> _products = new();
 
-    public IReadOnlyList<Product> AllProducts =>
-        _products.AsReadOnly();
+    public IReadOnlyList<Product> AllProducts => _products.AsReadOnly();
 
     public bool AddToRepository(Product product)
     {

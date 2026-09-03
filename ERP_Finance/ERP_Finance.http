@@ -1,6 +1,6 @@
 @ERP_Finance_HostAddress = http://localhost:5262
 
-//Create
+//Create Product
 POST {{ERP_Finance_HostAddress}}/api/product
 Content-Type: application/json
 {
@@ -14,23 +14,23 @@ Content-Type: application/json
 }
 
 ###
-
-//GetAll
+ 
+//GetAll Product
 GET {{ERP_Finance_HostAddress}}/api/product
 
 ###
 
-//Search By Name
+//Search By Name Product
 GET {{ERP_Finance_HostAddress}}/api/Product/search?name=arroz
 
 ###
 
-//GetById
+//GetById Product
 GET {{ERP_Finance_HostAddress}}/api/product/705f58e3-6095-4ac0-ac1b-91921bc80a38
 
 ###
 
-//Update
+//Update Product
 PATCH {{ERP_Finance_HostAddress}}/api/product/705f58e3-6095-4ac0-ac1b-91921bc80a38
 Content-Type: application/json
 {
@@ -39,10 +39,25 @@ Content-Type: application/json
 
 ###
 
-//Delete
+//Delete Product
 DELETE {{ERP_Finance_HostAddress}}/api/product/705f58e3-6095-4ac0-ac1b-91921bc80a38
 
 ###
 
 //HealthCheck
 GET {{ERP_Finance_HostAddress}}/health
+
+###
+
+//Create OrderItem
+POST {{ERP_Finance_HostAddress}}/api/orderItem
+Content-Type: application/json
+{
+  "orderId": "cdd357fe-1e79-420c-b6b6-95ea3e3a4257",
+  "productId": "00e667cc-356c-4962-98a7-de5c0f1e6403",
+  "quantity": 2.5
+}
+
+###
+//Get OrderItem
+GET {{ERP_Finance_HostAddress}}/api/orderItem/be49d270-665a-468b-9870-02adeeef5145

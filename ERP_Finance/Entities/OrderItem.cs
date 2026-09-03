@@ -1,10 +1,13 @@
-﻿namespace ERP_Finance.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace ERP_Finance.Entities;
 
 public class OrderItem
 {
     public Guid Id { get; private set; }
     public Guid OrderId { get; private set; }
     public Guid ProductId { get; private set; }
+    [JsonIgnore] 
     public Product Product { get; private set; } = null!;
     public decimal Quantity { get; private set; }
     public decimal UnitPrice { get; private set; }
