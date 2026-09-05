@@ -20,6 +20,8 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
 
         builder.Property(orderItem => orderItem.Subtotal).HasPrecision(18, 2).IsRequired();
 
+        builder.Property(orderItem => orderItem.Note).IsRequired(false);
+
         builder.HasOne(orderItem => orderItem.Product)
                .WithMany(product => product.OrderItems)
                .HasForeignKey(orderItem => orderItem.ProductId)

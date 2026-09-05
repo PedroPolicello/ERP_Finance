@@ -12,10 +12,11 @@ public class OrderItem
     public decimal Quantity { get; private set; }
     public decimal UnitPrice { get; private set; }
     public decimal Subtotal { get; private set; }
+    public string? Note { get; private set; }
 
 
 
-    public OrderItem(Guid orderId, Guid productId, decimal quantity, decimal unitPrice)
+    public OrderItem(Guid orderId, Guid productId, decimal quantity, decimal unitPrice, string? note = null)
     {
         ValidateId(orderId);
         ValidateId(productId);
@@ -28,6 +29,7 @@ public class OrderItem
         ProductId = productId;
         Quantity = quantity;
         UnitPrice = unitPrice;
+        Note = note;
 
         CalculateSubtotal(Quantity, UnitPrice);
     }
@@ -38,6 +40,11 @@ public class OrderItem
         Quantity = quantity;
 
         CalculateSubtotal(Quantity, UnitPrice);
+    }
+
+    public void UpdateNote(string? note)
+    {
+        Note = note;
     }
 
     private void CalculateSubtotal(decimal quantity, decimal unitPrice)

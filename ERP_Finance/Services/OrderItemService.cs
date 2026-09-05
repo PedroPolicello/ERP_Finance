@@ -29,7 +29,8 @@ public class OrderItemService
             orderId: orderItemDTO.OrderId,
             productId: orderItemDTO.ProductId,
             quantity: orderItemDTO.Quantity,
-            unitPrice: product.Price
+            unitPrice: product.Price,
+            note: orderItemDTO.Note
         );
 
         var created = _orderItemRepository.AddToRepository(orderItem);
