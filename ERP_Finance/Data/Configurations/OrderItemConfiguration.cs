@@ -25,6 +25,7 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.HasOne(orderItem => orderItem.Product)
                .WithMany(product => product.OrderItems)
                .HasForeignKey(orderItem => orderItem.ProductId)
-               .IsRequired().OnDelete(DeleteBehavior.Restrict);
+               .IsRequired()
+               .OnDelete(DeleteBehavior.Restrict);
     }
 }
