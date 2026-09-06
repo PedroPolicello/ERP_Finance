@@ -55,6 +55,50 @@ public class OrderItemServiceTests
         Assert.Equal(product.Price, result.UnitPrice);
         Assert.Equal(expectedSubtotal, result.Subtotal);
 
+        Assert.Null(result.Note);
+
+        Assert.Single(fakeOrderItemRepository.OrderItems);
+        Assert.Same(result, fakeOrderItemRepository.OrderItems.Single());
+    }
+
+    [Fact]
+    public void CreateOrderItemService_WithDtoContainingNote_ShouldPassNoteToOrderItem()
+    {
+        // Arrange
+        var fakeProductRepository = new FakeProductRepository();
+        var fakeOrderItemRepository = new FakeOrderItemRepository();
+
+        var service = new OrderItemService(
+            fakeOrderItemRepository,
+            fakeProductRepository);
+
+        var product = new Product(
+            sku: "123-456-789",
+            name: "Test product",
+            description: "Product used for OrderItemService unit test.",
+            price: 5.69m,
+            category: ProductCategory.Salgados,
+            details: new ProductDetails(
+                brandName: "Test brand",
+                weightOrVolume: 1m,
+                measureType: MeasureType.Unit),
+            createdAt: DateTime.UtcNow);
+
+        fakeProductRepository.AddToRepository(product);
+
+        var dto = new CreateOrderItemDTO
+        {
+            OrderId = Guid.NewGuid(),
+            ProductId = product.Id,
+            Quantity = 2.5m,
+            Note = "Sem cebola"
+        };
+
+        // Act
+        var result = service.CreateOrderItemService(dto);
+
+        // Assert
+        Assert.Equal(dto.Note, result.Note);
         Assert.Single(fakeOrderItemRepository.OrderItems);
         Assert.Same(result, fakeOrderItemRepository.OrderItems.Single());
     }

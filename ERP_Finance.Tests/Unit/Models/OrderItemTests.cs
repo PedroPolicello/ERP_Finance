@@ -160,4 +160,77 @@ public class OrderItemTests
         // Assert
         Assert.Equal("quantity", exception.ParamName);
     }
+
+    // Novos testes para Note
+
+    [Fact]
+    public void CreateOrderItem_WithNullNote_ShouldCreateOrderItemWithNullNote()
+    {
+        // Arrange
+        Guid orderId = Guid.NewGuid();
+        Guid productId = Guid.NewGuid();
+        decimal quantity = 2.5m;
+        decimal unitPrice = 5.69m;
+
+        // Act
+        var orderItem = new OrderItem(orderId, productId, quantity, unitPrice, note: null);
+
+        // Assert
+        Assert.Null(orderItem.Note);
+    }
+
+    [Fact]
+    public void CreateOrderItem_WithNote_ShouldCreateOrderItemWithGivenNote()
+    {
+        // Arrange
+        Guid orderId = Guid.NewGuid();
+        Guid productId = Guid.NewGuid();
+        decimal quantity = 2.5m;
+        decimal unitPrice = 5.69m;
+        string note = "Sem cebola";
+
+        // Act
+        var orderItem = new OrderItem(orderId, productId, quantity, unitPrice, note);
+
+        // Assert
+        Assert.Equal(note, orderItem.Note);
+    }
+
+    [Fact]
+    public void UpdateNote_WithNull_ShouldSetNoteToNull()
+    {
+        // Arrange
+        var orderItem = new OrderItem(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            2.5m,
+            5.69m,
+            note: "Nota inicial");
+
+        // Act
+        orderItem.UpdateNote(null);
+
+        // Assert
+        Assert.Null(orderItem.Note);
+    }
+
+    [Fact]
+    public void UpdateNote_WithNewValue_ShouldUpdateNote()
+    {
+        // Arrange
+        var orderItem = new OrderItem(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            2.5m,
+            5.69m,
+            note: "Nota inicial");
+
+        string newNote = "Apenas o molho à parte";
+
+        // Act
+        orderItem.UpdateNote(newNote);
+
+        // Assert
+        Assert.Equal(newNote, orderItem.Note);
+    }
 }
