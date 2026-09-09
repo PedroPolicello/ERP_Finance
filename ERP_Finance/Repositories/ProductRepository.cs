@@ -19,9 +19,9 @@ public class ProductRepository : Interfaces.IProductRepository
             return false;
 
         _context.Products.Add(product);
-        _context.SaveChanges();
+        var result = _context.SaveChanges();
 
-        return true;
+        return result > 0;
     }
 
     public bool UpdateInRepository(Product product)
@@ -42,9 +42,9 @@ public class ProductRepository : Interfaces.IProductRepository
             product.Details,
             product.LastUpdateAt);
 
-        _context.SaveChanges();
+        var result = _context.SaveChanges();
 
-        return true;
+        return result > 0;
     }
 
     public bool RemoveFromRepository(Product product)
@@ -58,9 +58,9 @@ public class ProductRepository : Interfaces.IProductRepository
             return false;
 
         _context.Products.Remove(existingProduct);
-        _context.SaveChanges();
+        var result = _context.SaveChanges();
 
-        return true;
+        return result > 0;
     }
 
     public IReadOnlyList<Product> AllProducts => _context.Products.AsNoTracking().ToList();

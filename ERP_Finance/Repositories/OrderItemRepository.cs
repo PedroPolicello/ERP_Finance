@@ -19,9 +19,9 @@ public class OrderItemRepository : IOrderItemRepository
             return false;
 
         _context.OrderItems.Add(orderItem);
-        _context.SaveChanges();
+        var result = _context.SaveChanges();
 
-        return true;
+        return result > 0;
     }
 
     public OrderItem? GetOrderItemById(Guid id) => _context.OrderItems.FirstOrDefault(orderItem => orderItem.Id == id);
