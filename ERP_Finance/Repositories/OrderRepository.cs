@@ -16,8 +16,7 @@ public class OrderRepository : IOrderRepository
 
     public bool AddToRepository(Order order)
     {
-        if (order == null)
-            return false;
+        ArgumentNullException.ThrowIfNull(order);
 
         _context.Orders.Add(order);
         var result = _context.SaveChanges();
