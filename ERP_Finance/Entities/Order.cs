@@ -11,6 +11,7 @@ public class Order
     public DateTime CreatedAt { get; private set; }
     public string? Note { get; private set; }
     public ICollection<OrderItem> OrderItems { get; private set; } = new List<OrderItem>();
+    public bool IsOpen => Status != OrderStatus.Delivered && Status != OrderStatus.Canceled;
 
     public Order(int orderNumber, Guid tabId, OrderStatus status = OrderStatus.SentToKitchen, string? note = null)
     {
@@ -31,7 +32,7 @@ public class Order
         if (item == null)
             throw new ArgumentNullException(nameof(item));
 
-        if(item.OrderId != Id)
+        if (item.OrderId != Id)
             throw new ArgumentException("Order item does not belong to this order.");
 
         OrderItems.Add(item);
@@ -45,10 +46,56 @@ public class Order
         OrderItems.Remove(item);
     }
 
-    public OrderItem? GetOrderItem(Guid orderItemId)
+    public OrderItem? GetOrderItemById(Guid orderItemId)
     {
         return OrderItems.FirstOrDefault(i => i.Id == orderItemId);
     }
+
+    public List<OrderItem> GetAllOrderItems()
+    {
+        return OrderItems.ToList();
+    }
+
+    public decimal GetTotal()
+    {
+        return OrderItems.Sum(orderItem => orderItem.Subtotal);
+    }
+
+    // ========== Order Status Management Methods ==========
+
+    public void StartPreparing()
+    {
+        if (Status != OrderStatus.SentToKitchen)
+            throw new InvalidOperationException("Order must be in SentToKitchen status to be started preparing.");
+
+        Status = OrderStatus.Preparing;
+    }
+
+    public void ReadyToDeliver()
+    {
+        if (Status != OrderStatus.Preparing)
+            throw new InvalidOperationException("Order must be in Preparing status to be ready to deliver.");
+
+        Status = OrderStatus.ReadyToDeliver;
+    }
+
+    public void Delivered()
+    {
+        if (Status != OrderStatus.ReadyToDeliver)
+            throw new InvalidOperationException("Order must be in ReadyToDeliver status to be delivered.");
+
+        Status = OrderStatus.Delivered;
+    }
+
+    public void Cancel()
+    {
+        if (Status == OrderStatus.Delivered || Status == OrderStatus.Canceled)
+            throw new InvalidOperationException("Cannot cancel an order that has already been delivered or is already canceled.");
+
+        Status = OrderStatus.Canceled;
+    }
+
+    // ======================================================
 
     private void ValidateOrderNumber(int number)
     {

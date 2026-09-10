@@ -2,7 +2,6 @@
 
 public enum OrderStatus
 {
-    Open,
     SentToKitchen,
     Preparing,
     ReadyToDeliver,
