@@ -42,12 +42,12 @@ Content-Type: application/json
 //Delete Product
 DELETE {{ERP_Finance_HostAddress}}/api/product/705f58e3-6095-4ac0-ac1b-91921bc80a38
 
-###
+### ////////////////////
 
 //HealthCheck
 GET {{ERP_Finance_HostAddress}}/health
 
-###
+### ////////////////////
 
 //Create OrderItem
 POST {{ERP_Finance_HostAddress}}/api/orderItem
@@ -59,5 +59,24 @@ Content-Type: application/json
 }
 
 ###
+
 //Get OrderItem
 GET {{ERP_Finance_HostAddress}}/api/orderItem/be49d270-665a-468b-9870-02adeeef5145
+
+### ////////////////////
+
+//Create Order
+POST {{ERP_Finance_HostAddress}}/api/Order
+Content-Type: application/json
+{
+  "orderNumber": 1,
+  "tabId": "00000000-0000-0000-0000-000000000001",
+  "note": "Pedido de teste para a cozinha."
+}
+
+###
+
+//Get Order by ID
+GET {{ERP_Finance_HostAddress}}/api/Order/d3323019-85e6-4f1d-a5ae-805496dbb47a
+
+###

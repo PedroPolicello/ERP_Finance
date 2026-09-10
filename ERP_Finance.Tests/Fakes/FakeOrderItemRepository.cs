@@ -7,8 +7,7 @@ public class FakeOrderItemRepository : IOrderItemRepository
 {
     private readonly List<OrderItem> _orderItems = new();
 
-    public IReadOnlyList<OrderItem> OrderItems =>
-        _orderItems.AsReadOnly();
+    public IReadOnlyList<OrderItem> OrderItems => _orderItems.AsReadOnly();
 
     public bool ShouldFailOnAdd { get; set; }
 
@@ -31,9 +30,9 @@ public class FakeOrderItemRepository : IOrderItemRepository
 
     public bool RemoveFromRepository(OrderItem orderItem)
     {
-        if(orderItem is null)
+        if (orderItem is null)
             return false;
-        
+
         return _orderItems.Remove(orderItem);
     }
 }
