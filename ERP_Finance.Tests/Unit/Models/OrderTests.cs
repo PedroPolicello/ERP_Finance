@@ -252,7 +252,7 @@ public class OrderTests
         order.AddOrderItem(secondOrderItem);
 
         // Act
-        var result = order.GetOrderItem(secondOrderItem.Id);
+        var result = order.GetOrderItemById(secondOrderItem.Id);
 
         // Assert
         Assert.NotNull(result);
@@ -276,7 +276,7 @@ public class OrderTests
         order.AddOrderItem(orderItem);
 
         // Act
-        var result = order.GetOrderItem(Guid.NewGuid());
+        var result = order.GetOrderItemById(Guid.NewGuid());
 
         // Assert
         Assert.Null(result);

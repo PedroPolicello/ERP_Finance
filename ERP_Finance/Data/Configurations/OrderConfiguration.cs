@@ -12,6 +12,8 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder.Property(order => order.OrderNumber).IsRequired();
 
+        builder.HasIndex(o => o.OrderNumber).IsUnique();
+
         builder.Property(order => order.TabId).IsRequired();
 
         builder.Property(order => order.Status).IsRequired();
