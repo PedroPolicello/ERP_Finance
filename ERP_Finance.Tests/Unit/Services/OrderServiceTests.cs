@@ -101,7 +101,7 @@ public class OrderServiceTests
         fakeOrderRepository.AddToRepository(order);
 
         // Act
-        var result = service.GetOrderService(order.Id);
+        var result = service.GetOrderByIdService(order.Id);
 
         // Assert
         Assert.NotNull(result);
@@ -125,7 +125,7 @@ public class OrderServiceTests
 
         // Act
         var exception = Assert.Throws<KeyNotFoundException>(
-            () => service.GetOrderService(nonExistingOrderId));
+            () => service.GetOrderByIdService(nonExistingOrderId));
 
         // Assert
         Assert.Equal("Order not found", exception.Message);

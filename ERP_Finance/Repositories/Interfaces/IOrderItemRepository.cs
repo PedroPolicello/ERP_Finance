@@ -6,5 +6,5 @@ public interface IOrderItemRepository
 {
     bool AddToRepository(OrderItem orderItem);
     OrderItem? GetOrderItemById(Guid id);
-
+    IReadOnlyList<OrderItem> GetAllOrderItems();
 }

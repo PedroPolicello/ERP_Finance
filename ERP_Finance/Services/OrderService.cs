@@ -33,7 +33,7 @@ public class OrderService
         return order;
     }
 
-    public Order GetOrderService(Guid id)
+    public Order GetOrderByIdService(Guid id)
     {
         var order = _orderRepository.GetOrderById(id);
 
@@ -42,4 +42,10 @@ public class OrderService
 
         return order;
     }
+
+    public IReadOnlyList<Order> GetAllOrdersService()
+    {
+        return _orderRepository.GetAllOrders();
+    }
+    
 }

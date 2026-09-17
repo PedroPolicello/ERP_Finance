@@ -41,7 +41,7 @@ public class OrderItemService
         return orderItem;
     }
 
-    public OrderItem GetOrderItemService(Guid id)
+    public OrderItem GetOrderItemByIdService(Guid id)
     {
         var orderItem = _orderItemRepository.GetOrderItemById(id);
 
@@ -49,5 +49,10 @@ public class OrderItemService
             throw new KeyNotFoundException("Order item not found.");
 
         return orderItem;
+    }
+
+    public IReadOnlyList<OrderItem> GetAllOrderItemsService()
+    {
+        return _orderItemRepository.GetAllOrderItems();
     }
 }

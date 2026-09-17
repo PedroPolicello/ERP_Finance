@@ -19,7 +19,7 @@ public class OrderController : ControllerBase
     [HttpGet("{id:guid}")]
     public ActionResult GetOrder(Guid id)
     {
-        var order = _orderService.GetOrderService(id);
+        var order = _orderService.GetOrderByIdService(id);
 
         return Ok(order);
     }

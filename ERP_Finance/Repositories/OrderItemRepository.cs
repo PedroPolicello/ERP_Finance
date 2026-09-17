@@ -27,4 +27,7 @@ public class OrderItemRepository : IOrderItemRepository
     public OrderItem? GetOrderItemById(Guid id) => _context.OrderItems.Include(orderItem => orderItem.Product)
                                                                       .FirstOrDefault(orderItem => orderItem.Id == id);
 
+    public IReadOnlyList<OrderItem> GetAllOrderItems() => _context.OrderItems.Include(orderItem => orderItem.Product)
+                                                                             .ToList();
+
 }
