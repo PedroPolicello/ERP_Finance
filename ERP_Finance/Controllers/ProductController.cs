@@ -25,8 +25,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet("search")]
-    public ActionResult<IReadOnlyList<Product>> GetProductsByName(
-    [FromQuery] string? name)
+    public ActionResult<IReadOnlyList<Product>> GetProductsByName([FromQuery] string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return Ok(Array.Empty<Product>());

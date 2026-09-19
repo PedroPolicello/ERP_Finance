@@ -1,4 +1,5 @@
 ﻿using ERP_Finance.DTOs.Order;
+using ERP_Finance.Entities;
 using ERP_Finance.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +18,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public ActionResult GetOrder(Guid id)
+    public ActionResult<Order> GetOrder(Guid id)
     {
         var order = _orderService.GetOrderByIdService(id);
 
