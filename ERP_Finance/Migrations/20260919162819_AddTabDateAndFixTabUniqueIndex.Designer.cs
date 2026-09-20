@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP_Finance.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260912161801_AddTabsTable")]
-    partial class AddTabsTable
+    [Migration("20260919162819_AddTabDateAndFixTabUniqueIndex")]
+    partial class AddTabDateAndFixTabUniqueIndex
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,7 +48,8 @@ namespace ERP_Finance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TabId");
+                    b.HasIndex("TabId", "OrderNumber")
+                        .IsUnique();
 
                     b.ToTable("Orders");
                 });
@@ -155,6 +156,9 @@ namespace ERP_Finance.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<DateOnly>("TabDate")
+                        .HasColumnType("date");
+
                     b.Property<int>("TabNumber")
                         .HasColumnType("int");
 
@@ -162,6 +166,9 @@ namespace ERP_Finance.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TabNumber", "TabDate")
+                        .IsUnique();
 
                     b.ToTable("Tabs");
                 });

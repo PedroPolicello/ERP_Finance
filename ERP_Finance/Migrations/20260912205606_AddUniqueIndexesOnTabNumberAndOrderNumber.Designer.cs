@@ -161,7 +161,7 @@ namespace ERP_Finance.Migrations
                     b.Property<int>("TabNumber")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TableNumber")
+                    b.Property<int?>("TableId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

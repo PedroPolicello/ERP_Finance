@@ -45,10 +45,8 @@ namespace ERP_Finance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderNumber")
+                    b.HasIndex("TabId", "OrderNumber")
                         .IsUnique();
-
-                    b.HasIndex("TabId");
 
                     b.ToTable("Orders");
                 });
@@ -155,15 +153,18 @@ namespace ERP_Finance.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<DateOnly>("TabDate")
+                        .HasColumnType("date");
+
                     b.Property<int>("TabNumber")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TableNumber")
+                    b.Property<int?>("TableId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TabNumber")
+                    b.HasIndex("TabNumber", "TabDate")
                         .IsUnique();
 
                     b.ToTable("Tabs");

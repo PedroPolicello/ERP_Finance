@@ -12,7 +12,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder.Property(order => order.OrderNumber).IsRequired();
 
-        builder.HasIndex(o => o.OrderNumber).IsUnique();
+        builder.HasIndex(order => new { order.TabId, order.OrderNumber }).IsUnique();
 
         builder.Property(order => order.TabId).IsRequired();
 

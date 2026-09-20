@@ -12,7 +12,7 @@ public class TabConfiguration : IEntityTypeConfiguration<Tab>
 
         builder.Property(tab => tab.TabNumber).IsRequired();
 
-        builder.HasIndex(t => t.TabNumber).IsUnique();
+        builder.HasIndex(tab => new { tab.TabNumber, tab.TabDate }).IsUnique();
 
         builder.Property(tab => tab.Status).IsRequired();
 

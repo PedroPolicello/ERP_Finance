@@ -11,6 +11,7 @@ public class Tab
     public int? TableNumber { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? ClosedAt { get; private set; }
+    public DateOnly TabDate { get; private set; }
     public ICollection<Order> Orders { get; private set; } = new List<Order>();
     public string? Note { get; private set; }
     public bool IsOpen => Status != TabStatus.Closed && Status != TabStatus.Canceled;
