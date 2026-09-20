@@ -22,6 +22,11 @@ public class FakeOrderRepository : IOrderRepository
         return true;
     }
 
+    public IReadOnlyList<Order> GetAllOrders()
+    {
+        return _orders.AsReadOnly();
+    }
+
     public Order? GetOrderById(Guid id)
     {
         return _orders.FirstOrDefault(order => order.Id == id);
