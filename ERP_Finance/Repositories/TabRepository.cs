@@ -40,6 +40,4 @@ public class TabRepository : ITabRepository
                                                            .ThenInclude(order => order.OrderItems)
                                                            .ThenInclude(orderItem => orderItem.Product)
                                                            .ToList();
-
-
 }

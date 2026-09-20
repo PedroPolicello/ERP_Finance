@@ -19,8 +19,10 @@ public class OrderService
         if (orderDTO == null)
             throw new ArgumentNullException(nameof(orderDTO));
 
+        var orderNumber = GetNextOrderNumber(orderDTO.TabId);
+
         var order = new Order(
-            orderNumber: orderDTO.OrderNumber,
+            orderNumber: orderNumber,
             tabId: orderDTO.TabId,
             note: orderDTO.Note
         );
@@ -47,5 +49,15 @@ public class OrderService
     {
         return _orderRepository.GetAllOrders();
     }
-    
+
+    private int GetNextOrderNumber(Guid tabId)
+    {
+        var lastOrder = _orderRepository.GetAllOrders()
+                                        .Where(order => order.TabId == tabId)
+                                        .OrderByDescending(order => order.OrderNumber)
+                                        .FirstOrDefault();
+
+        return lastOrder != null ? lastOrder.OrderNumber + 1 : 1;
+    }
+
 }
