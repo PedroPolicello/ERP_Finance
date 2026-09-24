@@ -7,4 +7,6 @@ public interface IOrderRepository
     bool AddToRepository(Order order);
     Order? GetOrderById(Guid id);
     IReadOnlyList<Order> GetAllOrders();
+    int GetLastOrderNumberFromTab(Guid tabId);
+
 }

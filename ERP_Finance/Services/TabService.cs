@@ -66,11 +66,8 @@ public class TabService
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        var lastTab = _tabRepository.GetAllTabs()
-                                    .Where(tab => tab.TabDate == today)
-                                    .OrderByDescending(tab => tab.TabNumber)
-                                    .FirstOrDefault();
+        var lastTabNumber = _tabRepository.GetLastTabNumberOfDay(today);
 
-        return lastTab != null ? lastTab.TabNumber + 1 : 1;
+        return lastTabNumber + 1;
     }
 }

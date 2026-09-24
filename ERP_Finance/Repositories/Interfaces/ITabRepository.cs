@@ -8,4 +8,5 @@ public interface ITabRepository
     Tab? GetTabById(Guid id);
     Tab? GetTabByNumber(int tabNumber);
     IReadOnlyList<Tab> GetAllTabs();
+    int GetLastTabNumberOfDay(DateOnly date);
 }

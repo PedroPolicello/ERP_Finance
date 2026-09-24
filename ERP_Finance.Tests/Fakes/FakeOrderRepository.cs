@@ -1,5 +1,6 @@
 ﻿using ERP_Finance.Entities;
 using ERP_Finance.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ERP_Finance.Tests.Fakes;
 
@@ -25,6 +26,11 @@ public class FakeOrderRepository : IOrderRepository
     public IReadOnlyList<Order> GetAllOrders()
     {
         return _orders.AsReadOnly();
+    }
+
+    public int GetLastOrderNumberFromTab(Guid tabId)
+    {
+        return _orders.Where(o => o.TabId == tabId).Select(t => (int?)t.OrderNumber).Max() ?? 0;
     }
 
     public Order? GetOrderById(Guid id)

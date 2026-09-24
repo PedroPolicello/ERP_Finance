@@ -18,7 +18,6 @@ public class OrderServiceTests
 
         var dto = new CreateOrderDTO
         {
-            OrderNumber = 1,
             TabId = Guid.NewGuid(),
             Note = "Customer requested no napkins."
         };
@@ -28,7 +27,6 @@ public class OrderServiceTests
 
         // Assert
         Assert.NotEqual(Guid.Empty, result.Id);
-        Assert.Equal(dto.OrderNumber, result.OrderNumber);
         Assert.Equal(dto.TabId, result.TabId);
         Assert.Equal(dto.Note, result.Note);
         Assert.Equal(OrderStatus.SentToKitchen, result.Status);
@@ -71,7 +69,6 @@ public class OrderServiceTests
 
         var dto = new CreateOrderDTO
         {
-            OrderNumber = 1,
             TabId = Guid.NewGuid(),
             Note = "Test note."
         };

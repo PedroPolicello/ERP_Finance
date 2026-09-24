@@ -52,12 +52,9 @@ public class OrderService
 
     private int GetNextOrderNumber(Guid tabId)
     {
-        var lastOrder = _orderRepository.GetAllOrders()
-                                        .Where(order => order.TabId == tabId)
-                                        .OrderByDescending(order => order.OrderNumber)
-                                        .FirstOrDefault();
+        var lastOrderNumber = _orderRepository.GetLastOrderNumberFromTab(tabId);
 
-        return lastOrder != null ? lastOrder.OrderNumber + 1 : 1;
+        return lastOrderNumber + 1;
     }
 
 }

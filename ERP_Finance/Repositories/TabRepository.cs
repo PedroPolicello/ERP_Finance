@@ -40,4 +40,8 @@ public class TabRepository : ITabRepository
                                                            .ThenInclude(order => order.OrderItems)
                                                            .ThenInclude(orderItem => orderItem.Product)
                                                            .ToList();
+
+    public int GetLastTabNumberOfDay(DateOnly date) => _context.Tabs.Where(t => t.TabDate == date)
+                                                             .Select(t => (int?)t.TabNumber)
+                                                             .Max() ?? 0;
 }

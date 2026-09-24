@@ -31,4 +31,10 @@ public class OrderRepository : IOrderRepository
     public IReadOnlyList<Order> GetAllOrders() => _context.Orders.Include(order => order.OrderItems)
                                                                  .ThenInclude(orderItem => orderItem.Product)
                                                                  .ToList();
+
+
+    public int GetLastOrderNumberFromTab(Guid tabId) => _context.Orders.Where(o => o.TabId == tabId)
+                                                                       .Select(t => (int?)t.OrderNumber)
+                                                                       .Max() ?? 0;
+
 }
