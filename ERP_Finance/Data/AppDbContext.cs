@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Tab> Tabs { get; set; }
+    public DbSet<Table> Tables { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

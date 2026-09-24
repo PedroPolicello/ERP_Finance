@@ -25,7 +25,7 @@ public class TabService
         var tab = new Tab(
             tabNumber: tabNumber,
             serviceType: tabDTO.ServiceType,
-            tableNumber: tabDTO.TableNumber,
+            tableId: tabDTO.TableId,
             note: tabDTO.Note
         );
 

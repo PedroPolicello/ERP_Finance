@@ -8,7 +8,7 @@ public class Tab
     public int TabNumber { get; private set; }
     public TabStatus Status { get; private set; }
     public ServiceType ServiceType { get; private set; }
-    public int? TableNumber { get; private set; }
+    public Guid? TableId { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? ClosedAt { get; private set; }
     public DateOnly TabDate { get; private set; }
@@ -25,7 +25,7 @@ public class Tab
         TabNumber = tabNumber;
         Status = TabStatus.Open;
         ServiceType = serviceType;
-        TableNumber = tableNumber;
+        TableId = tableId;
         CreatedAt = DateTime.UtcNow;
         ClosedAt = null;
         Note = note;

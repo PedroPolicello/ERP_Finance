@@ -18,7 +18,7 @@ public class TabConfiguration : IEntityTypeConfiguration<Tab>
 
         builder.Property(tab => tab.ServiceType).IsRequired();
 
-        builder.Property(tab => tab.TableNumber).IsRequired(false);
+        builder.Property(tab => tab.TableId).IsRequired(false);
 
         builder.Property(tab => tab.CreatedAt).IsRequired();
 
@@ -30,6 +30,12 @@ public class TabConfiguration : IEntityTypeConfiguration<Tab>
                .WithOne()
                .HasForeignKey(order => order.TabId)
                .IsRequired()
+               .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<Table>()
+               .WithMany(table => table.Tabs)
+               .HasForeignKey(tab => tab.TableId)
+               .IsRequired(false)
                .OnDelete(DeleteBehavior.Restrict);
     }
 }
