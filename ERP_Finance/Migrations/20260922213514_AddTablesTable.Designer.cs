@@ -4,6 +4,7 @@ using ERP_Finance.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP_Finance.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260922213514_AddTablesTable")]
+    partial class AddTablesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -159,12 +162,10 @@ namespace ERP_Finance.Migrations
                     b.Property<int>("TabNumber")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("TableId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("TableNumber")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TableId");
 
                     b.HasIndex("TabNumber", "TabDate")
                         .IsUnique();
@@ -249,14 +250,6 @@ namespace ERP_Finance.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ERP_Finance.Entities.Tab", b =>
-                {
-                    b.HasOne("ERP_Finance.Entities.Table", null)
-                        .WithMany("Tabs")
-                        .HasForeignKey("TableId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
             modelBuilder.Entity("ERP_Finance.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
@@ -270,11 +263,6 @@ namespace ERP_Finance.Migrations
             modelBuilder.Entity("ERP_Finance.Entities.Tab", b =>
                 {
                     b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("ERP_Finance.Entities.Table", b =>
-                {
-                    b.Navigation("Tabs");
                 });
 #pragma warning restore 612, 618
         }
