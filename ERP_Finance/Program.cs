@@ -27,6 +27,10 @@ builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 builder.Services.AddScoped<OrderItemService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<ITabRepository, TabRepository>();
+builder.Services.AddScoped<TabService>();
+builder.Services.AddScoped<ITableRepository, TableRepository>();
+builder.Services.AddScoped<TableService>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
