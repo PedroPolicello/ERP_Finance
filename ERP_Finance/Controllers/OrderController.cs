@@ -32,4 +32,40 @@ public class OrderController : ControllerBase
 
         return CreatedAtAction(nameof(GetOrder), new { id = result.Id }, result);
     }
+
+    // ================ Order Status Endpoints ================
+    [HttpPatch("{orderId:guid}/start-preparing")]
+    public ActionResult StartPreparingOrder(Guid orderId)
+    {
+        var order = _orderService.StartPreparingOrderService(orderId);
+
+        return Ok(order);
+    }
+
+    [HttpPatch("{orderId:guid}/ready-to-deliver")]
+    public ActionResult ReadyToDeliverOrder(Guid orderId)
+    {
+        var order = _orderService.ReadyToDeliverOrderService(orderId);
+
+        return Ok(order);
+    }
+
+    [HttpPatch("{orderId:guid}/delivered")]
+    public ActionResult DeliveredOrder(Guid orderId)
+    {
+        var order = _orderService.DeliveredOrderService(orderId);
+
+        return Ok(order);
+    }
+
+    [HttpPatch("{orderId:guid}/cancel")]
+    public ActionResult CancelOrder(Guid orderId)
+    {
+        var order = _orderService.CancelOrderService(orderId);
+
+        return Ok(order);
+    }
+
+    // ========================================================
+
 }

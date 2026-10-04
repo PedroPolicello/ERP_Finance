@@ -89,7 +89,7 @@ public class Order
 
     public void Cancel()
     {
-        if (Status == OrderStatus.Delivered || Status == OrderStatus.Canceled)
+        if (Status == OrderStatus.ReadyToDeliver || Status == OrderStatus.Delivered || Status == OrderStatus.Canceled)
             throw new InvalidOperationException("Cannot cancel an order that has already been delivered or is already canceled.");
 
         Status = OrderStatus.Canceled;

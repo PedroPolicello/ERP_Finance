@@ -24,6 +24,12 @@ public class OrderRepository : IOrderRepository
         return result > 0;
     }
 
+    public bool UpdateInRepository()
+    {
+        var result = _context.SaveChanges();
+        return result > 0;
+    }
+
     public Order? GetOrderById(Guid id) => _context.Orders.Include(order => order.OrderItems)
                                                           .ThenInclude(orderItem => orderItem.Product)
                                                           .FirstOrDefault(order => order.Id == id);

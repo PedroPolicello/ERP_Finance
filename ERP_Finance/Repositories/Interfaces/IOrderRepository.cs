@@ -8,5 +8,7 @@ public interface IOrderRepository
     Order? GetOrderById(Guid id);
     IReadOnlyList<Order> GetAllOrders();
     int GetLastOrderNumberFromTab(Guid tabId);
+    public bool UpdateInRepository();
+
 
 }

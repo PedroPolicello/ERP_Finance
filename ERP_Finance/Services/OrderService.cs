@@ -35,6 +35,74 @@ public class OrderService
         return order;
     }
 
+    public Order StartPreparingOrderService(Guid orderId)
+    {
+        var order = _orderRepository.GetOrderById(orderId);
+
+        if (order == null)
+            throw new KeyNotFoundException("Order not found");
+
+        order.StartPreparing();
+
+        var updated = _orderRepository.UpdateInRepository();
+
+        if (!updated)
+            throw new InvalidOperationException("The order status could not be updated");
+
+        return order;
+    }
+
+    public Order ReadyToDeliverOrderService(Guid orderId)
+    {
+        var order = _orderRepository.GetOrderById(orderId);
+
+        if (order == null)
+            throw new KeyNotFoundException("Order not found");
+
+        order.ReadyToDeliver();
+
+        var updated = _orderRepository.UpdateInRepository();
+
+        if (!updated)
+            throw new InvalidOperationException("The order status could not be updated");
+
+        return order;
+    }
+
+    public Order DeliveredOrderService(Guid orderId)
+    {
+        var order = _orderRepository.GetOrderById(orderId);
+
+        if (order == null)
+            throw new KeyNotFoundException("Order not found");
+
+        order.Delivered();
+
+        var updated = _orderRepository.UpdateInRepository();
+
+        if (!updated)
+            throw new InvalidOperationException("The order status could not be updated");
+
+        return order;
+    }
+
+    public Order CancelOrderService(Guid orderId)
+    {
+        var order = _orderRepository.GetOrderById(orderId);
+
+        if (order == null)
+            throw new KeyNotFoundException("Order not found");
+
+        order.Cancel();
+
+        var updated = _orderRepository.UpdateInRepository();
+
+        if (!updated)
+            throw new InvalidOperationException("The order status could not be updated");
+
+        return order;
+    }
+
     public Order GetOrderByIdService(Guid id)
     {
         var order = _orderRepository.GetOrderById(id);
