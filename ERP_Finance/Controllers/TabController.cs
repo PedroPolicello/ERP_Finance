@@ -63,6 +63,7 @@ public class TabController: ControllerBase
     public ActionResult CancelTab(Guid tabId, [FromBody] CancelTabDTO cancelTabDTO)
     {
         var tab = _tabService.CancelTabService(tabId, cancelTabDTO);
+
         return Ok(tab);
     }
 

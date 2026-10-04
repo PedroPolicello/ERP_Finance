@@ -2,6 +2,7 @@
 using ERP_Finance.Entities;
 using ERP_Finance.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ERP_Finance.Services;
 
@@ -42,7 +43,10 @@ public class TabService
         var tab = GetTabByIdService(tabId);
 
         tab.WaitForPayment();
-        _tabRepository.UpdateInRepository(tab);
+        var updated = _tabRepository.UpdateInRepository();
+
+        if (!updated)
+            throw new InvalidOperationException("The order status could not be updated");
 
         return tab;
     }
@@ -52,7 +56,10 @@ public class TabService
         var tab = GetTabByIdService(tabId);
 
         tab.Cancel(cancelTabDTO.CancellationReason);
-        _tabRepository.UpdateInRepository(tab);
+        var updated = _tabRepository.UpdateInRepository();
+
+        if (!updated)
+            throw new InvalidOperationException("The order status could not be updated");
 
         return tab;
     }
@@ -62,7 +69,10 @@ public class TabService
         var tab = GetTabByIdService(tabId);
 
         tab.Close();
-        _tabRepository.UpdateInRepository(tab);
+        var updated = _tabRepository.UpdateInRepository();
+
+        if (!updated)
+            throw new InvalidOperationException("The order status could not be updated");
 
         return tab;
     }

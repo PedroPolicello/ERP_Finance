@@ -9,6 +9,6 @@ public interface ITabRepository
     Tab? GetTabByNumber(int tabNumber);
     IReadOnlyList<Tab> GetAllTabs();
     int GetLastTabNumberOfDay(DateOnly date);
-    bool UpdateInRepository(Tab tab);
+    bool UpdateInRepository();
 
 }

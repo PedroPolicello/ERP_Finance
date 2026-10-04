@@ -24,7 +24,7 @@ public class TabRepository : ITabRepository
         return result > 0;
     }
 
-    public bool UpdateInRepository(Tab tab)
+    public bool UpdateInRepository()
     {
         var result = _context.SaveChanges();
         return result > 0;
