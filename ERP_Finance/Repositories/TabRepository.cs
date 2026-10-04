@@ -24,6 +24,12 @@ public class TabRepository : ITabRepository
         return result > 0;
     }
 
+    public bool UpdateInRepository(Tab tab)
+    {
+        var result = _context.SaveChanges();
+        return result > 0;
+    }
+
     public Tab? GetTabById(Guid id) => _context.Tabs.Include(tab => tab.Orders)
                                                     .ThenInclude(order => order.OrderItems)
                                                     .ThenInclude(orderItem => orderItem.Product)

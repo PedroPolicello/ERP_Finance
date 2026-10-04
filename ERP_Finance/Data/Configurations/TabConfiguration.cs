@@ -26,6 +26,8 @@ public class TabConfiguration : IEntityTypeConfiguration<Tab>
 
         builder.Property(tab => tab.Note).IsRequired(false);
 
+        builder.Property(tab => tab.CancellationReason).IsRequired(false);
+
         builder.HasMany(tab => tab.Orders)
                .WithOne()
                .HasForeignKey(order => order.TabId)

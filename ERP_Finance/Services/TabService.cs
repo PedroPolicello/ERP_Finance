@@ -37,6 +37,36 @@ public class TabService
         return tab;
     }
 
+    public Tab TabToWaitingForPaymentService(Guid tabId)
+    {
+        var tab = GetTabByIdService(tabId);
+
+        tab.WaitForPayment();
+        _tabRepository.UpdateInRepository(tab);
+
+        return tab;
+    }
+
+    public Tab CancelTabService(Guid tabId, CancelTabDTO cancelTabDTO)
+    {
+        var tab = GetTabByIdService(tabId);
+
+        tab.Cancel(cancelTabDTO.CancellationReason);
+        _tabRepository.UpdateInRepository(tab);
+
+        return tab;
+    }
+
+    public Tab CloseTabService(Guid tabId)
+    {
+        var tab = GetTabByIdService(tabId);
+
+        tab.Close();
+        _tabRepository.UpdateInRepository(tab);
+
+        return tab;
+    }
+
     public Tab GetTabByIdService(Guid id)
     {
         var tab = _tabRepository.GetTabById(id);

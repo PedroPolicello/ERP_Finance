@@ -14,9 +14,10 @@ public class Tab
     public DateOnly TabDate { get; private set; }
     public ICollection<Order> Orders { get; private set; } = new List<Order>();
     public string? Note { get; private set; }
+    public string? CancellationReason { get; private set; }
     public bool IsOpen => Status != TabStatus.Closed && Status != TabStatus.Canceled;
 
-    public Tab(int tabNumber, ServiceType serviceType, int? tableNumber = null, string? note = null)
+    public Tab(int tabNumber, ServiceType serviceType, Guid? tableId, string? note = null)
     {
         ValidateTabNumber(tabNumber);
         ValidateServiceType(serviceType);
@@ -100,10 +101,15 @@ public class Tab
         ClosedAt = DateTime.UtcNow;
     }
 
-    public void Cancel()
+    public void Cancel(string cancellationReason)
     {
         if (Status != TabStatus.Open)
             throw new InvalidOperationException("Cannot cancel a tab that is not open.");
+
+        if (string.IsNullOrWhiteSpace(cancellationReason))
+            throw new ArgumentException("Cancellation reason is required.", nameof(cancellationReason));
+
+        CancellationReason = cancellationReason;
 
         Status = TabStatus.Canceled;
         ClosedAt = DateTime.UtcNow;

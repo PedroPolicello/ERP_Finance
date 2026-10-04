@@ -49,4 +49,36 @@ public class TabController: ControllerBase
         return CreatedAtAction(nameof(GetTab), new { id = result.Id }, result);
     }
 
+    // ================ Tab Status Endpoints ================
+
+    [HttpPatch("{tabId:guid}/wait-for-payment")]
+    public ActionResult TabToWaitingForPayment(Guid tabId)
+    {
+        var tab = _tabService.TabToWaitingForPaymentService(tabId);
+
+        return Ok(tab);
+    }
+
+    [HttpPatch("{tabId:guid}/cancel")]
+    public ActionResult CancelTab(Guid tabId, [FromBody] CancelTabDTO cancelTabDTO)
+    {
+        var tab = _tabService.CancelTabService(tabId, cancelTabDTO);
+        return Ok(tab);
+    }
+
+    // TODO: TEMPORÁRIO — este endpoint existe só para testar o fluxo de Comanda
+    // antes do módulo de Pagamentos existir. Quando Pagamentos for implementado,
+    // REMOVER este endpoint (ou travar atrás de uma verificação de pagamento confirmado) —
+    // hoje qualquer chamada fecha a comanda sem nenhuma validação de pagamento.
+    [HttpPatch("{tabId:guid}/close")]
+    public ActionResult CloseTab(Guid tabId)
+    {
+        var tab = _tabService.CloseTabService(tabId);
+
+        return Ok(tab);
+    }
+
+    // ======================================================
+
+
 }
