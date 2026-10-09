@@ -8,5 +8,5 @@ public class UpdateOrderItemDTO
     public decimal? Quantity { get; set; }
 
     public string? Note { get; set; }
-    public bool UpdateNoteField { get; set; } // ou outra forma explícita de sinalizar "quero limpar a nota"
+    public bool UpdateNoteField { get; set; }
 }

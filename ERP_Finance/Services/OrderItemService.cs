@@ -74,9 +74,7 @@ public class OrderItemService
 
         EnsureOrderIsEditable(existingOrderItem.OrderId);
 
-        _orderItemRepository.RemoveFromRepository(existingOrderItem);
-
-        var deleted = _orderItemRepository.UpdateInRepository();
+        var deleted = _orderItemRepository.RemoveFromRepository(existingOrderItem);
         if (!deleted)
             throw new InvalidOperationException("The order item could not be deleted.");
 
