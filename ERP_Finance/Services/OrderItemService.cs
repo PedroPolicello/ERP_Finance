@@ -1,6 +1,7 @@
 ﻿using ERP_Finance.DTOs.OrderItem;
 using ERP_Finance.Entities;
 using ERP_Finance.Repositories.Interfaces;
+using ERP_Finance.Types;
 
 namespace ERP_Finance.Services;
 
@@ -8,11 +9,13 @@ public class OrderItemService
 {
     private readonly IOrderItemRepository _orderItemRepository;
     private readonly IProductRepository _productRepository;
+    private readonly IOrderRepository _orderRepository;
 
-    public OrderItemService(IOrderItemRepository orderItemRepository, IProductRepository productRepository)
+    public OrderItemService(IOrderItemRepository orderItemRepository, IProductRepository productRepository, IOrderRepository orderRepository)
     {
         _orderItemRepository = orderItemRepository;
         _productRepository = productRepository;
+        _orderRepository = orderRepository;
     }
 
     public OrderItem CreateOrderItemService(CreateOrderItemDTO orderItemDTO)
@@ -50,15 +53,15 @@ public class OrderItemService
         if (existingOrderItem == null)
             throw new KeyNotFoundException("Order item not found.");
 
-        if (orderItemDTO.Quantity != existingOrderItem.Quantity)
-            existingOrderItem.UpdateQuantity(orderItemDTO.Quantity);
+        EnsureOrderIsEditable(existingOrderItem.OrderId);
 
-        if (orderItemDTO.Note != existingOrderItem.Note)
+        if (orderItemDTO.Quantity.HasValue && orderItemDTO.Quantity.Value != existingOrderItem.Quantity)
+            existingOrderItem.UpdateQuantity(orderItemDTO.Quantity.Value);
+
+        if (orderItemDTO.UpdateNoteField)
             existingOrderItem.UpdateNote(orderItemDTO.Note);
 
-        var updated = _orderItemRepository.UpdateInRepository();
-        if (!updated)
-            throw new InvalidOperationException("The order item could not be updated.");
+        _orderItemRepository.UpdateInRepository();
 
         return true;
     }
@@ -68,6 +71,8 @@ public class OrderItemService
         var existingOrderItem = _orderItemRepository.GetOrderItemById(orderItemId);
         if (existingOrderItem == null)
             throw new KeyNotFoundException("Order item not found.");
+
+        EnsureOrderIsEditable(existingOrderItem.OrderId);
 
         _orderItemRepository.RemoveFromRepository(existingOrderItem);
 
@@ -91,5 +96,15 @@ public class OrderItemService
     public IReadOnlyList<OrderItem> GetAllOrderItemsService()
     {
         return _orderItemRepository.GetAllOrderItems();
+    }
+
+    private void EnsureOrderIsEditable(Guid orderId)
+    {
+        var order = _orderRepository.GetOrderById(orderId);
+        if (order == null)
+            throw new KeyNotFoundException("Order not found.");
+
+        if (order.Status == OrderStatus.ReadyToDeliver || order.Status == OrderStatus.Delivered)
+            throw new InvalidOperationException("Cannot edit or remove an item from an order that is ready to deliver or already delivered.");
     }
 }

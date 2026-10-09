@@ -31,4 +31,23 @@ public class OrderItemController : ControllerBase
 
         return CreatedAtAction(nameof(GetOrderItem), new { id = result.Id }, result);
     }
+
+    [HttpPatch("{id:guid}")]
+    public ActionResult UpdateOrderItem(Guid id, [FromBody] UpdateOrderItemDTO orderItemDTO)
+    {
+        var updated = _orderItemService.UpdateOrderItemService(id, orderItemDTO);
+
+        if (!updated)
+            return BadRequest();
+
+        return Ok();
+    }
+
+    [HttpDelete("{id:guid}")]
+    public ActionResult DeleteOrderItem(Guid id)
+    {
+        _orderItemService.DeleteOrderItemService(id);
+
+        return NoContent();
+    }
 }

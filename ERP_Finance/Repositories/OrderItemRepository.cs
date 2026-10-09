@@ -32,13 +32,7 @@ public class OrderItemRepository : IOrderItemRepository
 
     public bool RemoveFromRepository(OrderItem orderItem)
     {
-        ArgumentNullException.ThrowIfNull(orderItem);
-
-        var existingOrderItem = GetOrderItemById(orderItem.Id);
-        if (existingOrderItem == null)
-            return false;
-
-        _context.OrderItems.Remove(existingOrderItem);
+        _context.OrderItems.Remove(orderItem);
         var result = _context.SaveChanges();
 
         return result > 0;

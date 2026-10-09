@@ -49,15 +49,7 @@ public class ProductRepository : Interfaces.IProductRepository
 
     public bool RemoveFromRepository(Product product)
     {
-        if (product == null)
-            return false;
-
-        var existingProduct = GetProductById(product.Id);
-
-        if (existingProduct == null)
-            return false;
-
-        _context.Products.Remove(existingProduct);
+        _context.Products.Remove(product);
         var result = _context.SaveChanges();
 
         return result > 0;
