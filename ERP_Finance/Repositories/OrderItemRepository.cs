@@ -24,6 +24,26 @@ public class OrderItemRepository : IOrderItemRepository
         return result > 0;
     }
 
+    public bool UpdateInRepository()
+    {
+        var result = _context.SaveChanges();
+        return result > 0;
+    }
+
+    public bool RemoveFromRepository(OrderItem orderItem)
+    {
+        ArgumentNullException.ThrowIfNull(orderItem);
+
+        var existingOrderItem = GetOrderItemById(orderItem.Id);
+        if (existingOrderItem == null)
+            return false;
+
+        _context.OrderItems.Remove(existingOrderItem);
+        var result = _context.SaveChanges();
+
+        return result > 0;
+    }
+
     public OrderItem? GetOrderItemById(Guid id) => _context.OrderItems.Include(orderItem => orderItem.Product)
                                                                       .FirstOrDefault(orderItem => orderItem.Id == id);
 

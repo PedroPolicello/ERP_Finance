@@ -64,7 +64,6 @@ public class ProductService
 
     public bool UpdateProductService(Guid id, UpdateProductDTO productDTO)
     {
-
         if (productDTO == null)
             throw new ArgumentNullException(nameof(productDTO));
 
